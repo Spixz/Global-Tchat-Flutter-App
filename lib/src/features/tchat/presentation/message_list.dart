@@ -12,11 +12,15 @@ class MessageList extends StatefulWidget {
 class _MessageListState extends State<MessageList> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: kTestMessage.length,
-      itemBuilder: (context, index) {
-        return MessageBody(message: kTestMessage[index]);
-      },
-    );
+    var size = MediaQuery.of(context).size;
+
+    return SizedBox(
+        height: size.height * 0.85,
+        child: ListView.builder(
+          itemCount: kTestMessage.length,
+          itemBuilder: (context, index) {
+            return MessageBody(message: kTestMessage[index]);
+          },
+        ));
   }
 }

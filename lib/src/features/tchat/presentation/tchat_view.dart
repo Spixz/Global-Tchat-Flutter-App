@@ -19,10 +19,7 @@ class _TchatViewState extends State<TchatView> {
         title: const Text('Tchat'),
       ),
       body: Column(
-        children: [
-          SizedBox(height: size.height * 0.85, child: const MessageList()),
-          const PromptUserMessage()
-        ],
+        children: const [MessageList(), PromptUserMessage()],
       ),
     );
   }
