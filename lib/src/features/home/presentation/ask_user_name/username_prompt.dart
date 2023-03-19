@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/app_router.dart';
 
 class UsernamePrompt extends ConsumerStatefulWidget {
@@ -16,13 +17,21 @@ class _UsernamePromptState extends ConsumerState<UsernamePrompt> {
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController();
+    _usernameController =
+        TextEditingController(text: ref.read(userProvider.notifier).state.uid);
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
     super.dispose();
+  }
+
+  void nextScreen(String? username) {
+    if (username != null) {
+      ref.read(userProvider.notifier).state = AppUser(uid: username);
+    }
+    GoRouter.of(context).pushNamed(AppRoute.globalTchat.name);
   }
 
   @override
@@ -40,13 +49,10 @@ class _UsernamePromptState extends ConsumerState<UsernamePrompt> {
                 border: OutlineInputBorder(),
                 labelText: "Username",
               ),
-              onSubmitted: (value) {
-                GoRouter.of(context).pushNamed(AppRoute.globalTchat.name);
-              }),
+              onSubmitted: (value) => nextScreen(_usernameController.text)),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () =>
-                GoRouter.of(context).pushNamed(AppRoute.globalTchat.name),
+            onPressed: () => nextScreen(_usernameController.text),
             child: const Text("Submit"),
           ),
         ],
