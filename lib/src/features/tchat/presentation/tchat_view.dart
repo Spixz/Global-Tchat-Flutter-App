@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/message_appbar.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/message_list.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/prompt_user_message.dart';
 
 class TchatView extends StatefulWidget {
@@ -18,7 +17,7 @@ class _TchatViewState extends State<TchatView> {
     return Scaffold(
       appBar: const MessagerieAppbar(),
       body: Column(
-        children: const [MessageList(), PromptUserMessage()],
+        children: const [/*MessageList()*/ PromptUserMessage()],
       ),
     );
   }

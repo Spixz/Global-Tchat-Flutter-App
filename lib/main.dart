@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore:depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/firebase_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // turn off the # in the URLs on the web
   usePathUrlStrategy();
-  // * Register error handlers. For more info, see:
-  // * https://docs.flutter.dev/testing/errors
   registerErrorHandlers();
-  // * Entry point of the app
+  await FirebaseManager.initialize();
   runApp(const ProviderScope(child: MyApp()));
 }
 

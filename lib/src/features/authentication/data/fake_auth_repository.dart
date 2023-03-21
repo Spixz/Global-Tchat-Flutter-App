@@ -2,11 +2,12 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthRepository {
   Stream<AppUser?> authStateChanges();
   AppUser? get currentUser;
-  Future<void> signInWithEmailAndPassword(String email, String password);
+  Future<dynamic> signInWithEmailAndPassword(String email, String password);
   Future<void> createUserWithEmailAndPassword(String email, String password);
   Future<void> signOut();
   void dispose();
@@ -20,9 +21,11 @@ class FirebaseAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<void> createUserWithEmailAndPassword(String email, String password) {
-    // TODO: implement createUserWithEmailAndPassword
-    throw UnimplementedError();
+  Future<dynamic> createUserWithEmailAndPassword(
+      String email, String password) {
+    print("Dans le firebase");
+    return FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
   }
 
   @override
@@ -62,6 +65,8 @@ class FakeAuthRepository extends AuthRepository {
   @override
   Future<void> createUserWithEmailAndPassword(
       String email, String password) async {
+    print("Dans le fake");
+
     if (currentUser == null) createNewUser(email, password);
   }
 

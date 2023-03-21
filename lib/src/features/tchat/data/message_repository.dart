@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/test_messages.dart';
@@ -10,7 +9,6 @@ abstract class MessageRepository {
   Future<void> sendMessage(Message message); //Ajoute un message au stream
   Future<List<Message>> getMessages(); //Récupère les messages
   Stream<List<Message>> getMessagesByStream();
-  void dispose();
 }
 
 class FakeMessageRepository extends MessageRepository {
@@ -49,18 +47,12 @@ class FakeMessageRepository extends MessageRepository {
     }
     print('ended generating values...');
   }
-
-  @override
-  void dispose() => Void;
 }
 
 final messageRepositoryProvider = Provider<MessageRepository>((ref) {
   const isFake = String.fromEnvironment('useFakeRepos') == 'true';
   final messageRepository =
       isFake ? FakeMessageRepository() : FakeMessageRepository();
-  ref.onDispose(() {
-    messageRepository.dispose();
-  });
   return messageRepository;
 });
 
