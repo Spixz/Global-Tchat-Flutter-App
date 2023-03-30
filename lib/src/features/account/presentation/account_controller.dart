@@ -18,6 +18,13 @@ class AccountController extends StateNotifier<AccountState> {
     final data = await AsyncValue.guard(() => auth.signOut());
     state = state.copyWith(value: data);
   }
+
+  Future<dynamic> changeUserInformations(Map<String, dynamic> datas) async {
+    state = state.copyWith(value: const AsyncLoading());
+    final data =
+        await AsyncValue.guard(() => auth.changeUserInformations(datas));
+    state = state.copyWith(value: data);
+  }
 }
 
 final accountControllerProvider =

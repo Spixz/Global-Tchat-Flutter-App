@@ -19,7 +19,6 @@ class AuthController extends StateNotifier<AccountState> {
       String email, String password) async {
     try {
       final tmp = await auth.signInUserWithEmailAndPassword(email, password);
-      print(tmp);
       return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -37,7 +36,6 @@ class AuthController extends StateNotifier<AccountState> {
       String email, String password) async {
     try {
       final tmp = await auth.createUserWithEmailAndPassword(email, password);
-      print(tmp);
       return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

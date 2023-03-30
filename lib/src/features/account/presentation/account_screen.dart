@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/data/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_app_bar/account_app_bar.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -29,19 +29,14 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen(accountControllerProvider, (previous, state) {
-      // state.showAlertDialogOnError(context);
-      if (state.value.hasError) {
-        print("Erreur durant LOGOUT");
-      }
+      state.value.showAlertDialogOnError(context);
     });
 
-    AppUser? user = ref.watch(authRepositoryProvider).currentUser;
-    if (user != null) {
-      // debugPrint(user.toJson());
-      // debugPrint(user.fbUser!.email);
-      _emailController.text = user.fbUser?.email ?? "";
-      _usernameController.text = user.username ?? "none";
-    }
+    var stream = ref.watch(authRepositoryUserStreamProvider);
+    stream.whenData((user) => {
+          _emailController.text = user?.email ?? '',
+          _usernameController.text = user?.username ?? '',
+        });
 
     return Scaffold(
         appBar: const AccountAppBar(),
@@ -54,20 +49,12 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
                 decoration: const InputDecoration(
                   icon: Icon(Icons.person),
                   hintText: 'Username',
-                  labelText: 'Name *',
+                  labelText: 'Name',
                 ),
-                onSaved: (String? value) {
-                  // This optional block of code can be used to run
-                  // code when the user saves the form.
-                },
-                // validator: (String? value) {
-                //   return (value != null && value.contains('@'))
-                //       ? 'Do not use the @ char.'
-                //       : null;
-                // },
               ),
               TextFormField(
                 controller: _emailController,
+                readOnly: true,
                 decoration: const InputDecoration(
                   icon: Icon(Icons.person),
                   hintText: 'Email',
@@ -76,8 +63,11 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
               ),
               TextButton(
                   onPressed: () async {
-                    user?.username = _usernameController.text;
-                    await ref.read(authRepositoryProvider).setUserData();
+                    await ref
+                        .read(authRepositoryProvider)
+                        .changeUserInformations({
+                      'username': username,
+                    });
                   },
                   child: const Text("Save")),
               TextButton(

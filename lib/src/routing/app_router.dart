@@ -12,12 +12,20 @@ import 'package:go_router/go_router.dart';
 enum AppRoute { home, login, account, globalTchat }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final authRepositoy = ref.watch(authRepositoryProvider);
+  // final userStreamProvider = ref.watch(authRepositoryUserStreamProvider);
+
+  ///TODO: La redirection est évalué 4 fois au démarrage de l'application.
+  ///et 2 fois à chaque fois que l'on change de route.
+
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
-    redirect: (context, state) {
-      final isLogged = authRepositoy.currentUser != null;
+    redirect: (context, state) async {
+      final userStreamProvider =
+          ref.read(authRepositoryProvider).authStateChange();
+      final value = await userStreamProvider.first;
+
+      final isLogged = value != null;
       debugPrint(
           "Annalyse de la route en cours (actual: ${state.location} | isLogged: $isLogged ):");
       if (isLogged) {
@@ -26,7 +34,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/';
         }
       } else {
-        if (state.location == '/tchat' || state.location == '/') {
+        if (['/tchat', '/account', '/'].contains(state.location)) {
           debugPrint(
               "Vous avez été redirigé sur le loggin car vous n'avez pas accès au home");
           return '/login';
@@ -34,7 +42,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
       return null;
     },
-    refreshListenable: GoRouterRefreshStream(authRepositoy.authStateChange()),
+    refreshListenable: GoRouterRefreshStream(
+        ref.read(authRepositoryProvider).authStateChange()),
     routes: [
       GoRoute(
           path: '/',
@@ -60,12 +69,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
-
- // GoRoute(
-          //   path: 'product/:id',
-          //   name: AppRoute.product.name,
-          //   builder: (context, state) {
-          //     final productId = state.params['id']!;
-          //     return ProductScreen(productId: productId);
-          //   })
-
+// GoRoute(
+//   path: 'product/:id',
+//   name: AppRoute.product.name,
+//   builder: (context, state) {
+//     final productId = state.params['id']!;
+//     return ProductScreen(productId: productId);
+//   })
