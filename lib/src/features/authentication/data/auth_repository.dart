@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/data/app_user.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 
 class AuthRepository {
   final FirebaseAuth auth;
@@ -84,11 +84,12 @@ class AuthRepository {
       await firestore
           .collection('users')
           .doc(_actualUser!.uid)
-          .set(_actualUser!.toMap());
+          .set(_actualUser!.toMap(withUid: false));
       userStreamController.add(_actualUser);
     }
   }
 
+  ///TODO: Doit être agnostique (ne pas utiliser AppUser)
   Future<AppUser?> retrieveUserFromUid(String uid) async {
     var req = await firestore.collection('users').doc(uid).get();
     var userData = req.data();
@@ -100,6 +101,7 @@ class AuthRepository {
     }
     return null;
   }
+
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

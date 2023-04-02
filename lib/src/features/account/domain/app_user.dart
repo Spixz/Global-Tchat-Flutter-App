@@ -41,9 +41,9 @@ class AppUser {
   }
 
 //sinon il va me stocker l'uid en DB
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool withUid = true}) {
     return <String, dynamic>{
-      // 'uid': uid,
+      ...withUid ? {'uid': uid} : {},
       'email': email,
       'username': username,
       'profilePic': profilePic,

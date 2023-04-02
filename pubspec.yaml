@@ -44,6 +44,8 @@ dependencies:
   firebase_core: 2.8.0
   firebase_auth: 4.3.0
   cloud_firestore: ^4.4.5
+  salomon_bottom_bar: ^3.3.1
+  persistent_bottom_nav_bar: ^5.0.2
 
 dev_dependencies:
   flutter_test:

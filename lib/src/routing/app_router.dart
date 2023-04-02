@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/presentation/login_register_screen.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/presentation/create_group_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/home/presentation/home_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/tchat_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/go_router_refresh_stream.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/not_found_screen.dart';
-import 'package:go_router/go_router.dart';
 
-enum AppRoute { home, login, account, globalTchat }
+enum AppRoute { home, login, account, globalTchat, createGroup }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   // final userStreamProvider = ref.watch(authRepositoryUserStreamProvider);
-
-  ///TODO: La redirection est évalué 4 fois au démarrage de l'application.
-  ///et 2 fois à chaque fois que l'on change de route.
+//a delete
 
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (context, state) async {
+      //TODO: La mettre ailleur
       final userStreamProvider =
           ref.read(authRepositoryProvider).authStateChange();
       final value = await userStreamProvider.first;
@@ -35,6 +35,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
       } else {
         if (['/tchat', '/account', '/'].contains(state.location)) {
+          //TODO: add createGroup
           debugPrint(
               "Vous avez été redirigé sur le loggin car vous n'avez pas accès au home");
           return '/login';
@@ -63,16 +64,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: 'tchat',
                 name: AppRoute.globalTchat.name,
                 builder: (context, state) => const TchatView()),
+            GoRoute(
+                path: 'createGroup',
+                name: AppRoute.createGroup.name,
+                builder: (context, state) => const CreateNewGroup()),
           ])
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
 });
-
-// GoRoute(
-//   path: 'product/:id',
-//   name: AppRoute.product.name,
-//   builder: (context, state) {
-//     final productId = state.params['id']!;
-//     return ProductScreen(productId: productId);
-//   })
