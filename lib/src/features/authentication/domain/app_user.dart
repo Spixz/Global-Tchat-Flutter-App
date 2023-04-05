@@ -1,3 +1,0 @@
-// class AppUser {
-//   final 
-// }

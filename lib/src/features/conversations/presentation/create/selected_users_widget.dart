@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/presentation/create_group_controller.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_controller.dart';
 
 class SelectedUsers extends ConsumerStatefulWidget {
   final List<AppUser> selectedUsers;
@@ -14,7 +14,7 @@ class SelectedUsers extends ConsumerStatefulWidget {
 class _SearchResultState extends ConsumerState<SelectedUsers> {
   void removeUserFromSelectedUsers(AppUser user) {
     ref
-        .read(CreateGroupControllerProvider.notifier)
+        .read(CreateConversationControllerProvider.notifier)
         .removeUserFromSelectedUsers(user);
   }
 
@@ -36,11 +36,7 @@ class _SearchResultState extends ConsumerState<SelectedUsers> {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: InputChip(
                     label: Text(user.username),
-                    onDeleted: () {
-                      setState(() {
-                        removeUserFromSelectedUsers(user);
-                      });
-                    },
+                    onDeleted: () => removeUserFromSelectedUsers(user),
                   ),
                 );
               },

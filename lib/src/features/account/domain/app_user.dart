@@ -54,13 +54,14 @@ class AppUser {
 
   factory AppUser.fromMap(Map<String, dynamic> map) {
     return AppUser(
-      uid: map['uid'] as String,
-      email: map['email'] as String,
-      username: map['username'] as String,
-      profilePic: map['profilePic'] as String,
-      isOnline: map['isOnline'] as bool,
-      groupId: List<String>.from((map['groupId'] as List<String>)),
-    );
+        uid: map['uid'] as String,
+        email: map['email'] as String,
+        username: map['username'] as String,
+        profilePic: map['profilePic'] as String,
+        isOnline: map['isOnline'] as bool,
+        groupId: map['groupId'] != null
+            ? (map['groupId'] as List).map((m) => m as String).toList()
+            : [""]);
   }
 
 //Si une clé n'est pas présente dans la map, on utilise la valeur existante.

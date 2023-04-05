@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/presentation/create_group_controller.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_controller.dart';
 
 class SearchResults extends ConsumerStatefulWidget {
   final List<AppUser> searchResult;
@@ -14,7 +14,7 @@ class SearchResults extends ConsumerStatefulWidget {
 class _SearchResultState extends ConsumerState<SearchResults> {
   void _addUserToSelectedUsers(AppUser user) {
     ref
-        .read(CreateGroupControllerProvider.notifier)
+        .read(CreateConversationControllerProvider.notifier)
         .addUserToSelectedUsers(user);
   }
 
@@ -34,9 +34,7 @@ class _SearchResultState extends ConsumerState<SearchResults> {
                   ? CircleAvatar(backgroundImage: NetworkImage(user.profilePic))
                   : const Icon(Icons.person),
               title: Text(user.username),
-              onTap: () {
-                _addUserToSelectedUsers(user);
-              },
+              onTap: () => _addUserToSelectedUsers(user),
             );
           }),
     );

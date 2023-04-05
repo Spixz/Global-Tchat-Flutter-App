@@ -4,20 +4,28 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/presentation/login_register_screen.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/presentation/create_group_view.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_view.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/home/presentation/home_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/tchat_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/go_router_refresh_stream.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/not_found_screen.dart';
 
-enum AppRoute { home, login, account, globalTchat, createGroup }
+enum AppRoute {
+  home,
+  login,
+  account,
+  globalTchat,
+  createConversation,
+  listConversations
+}
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   // final userStreamProvider = ref.watch(authRepositoryUserStreamProvider);
 //a delete
 
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/listConversations',
     debugLogDiagnostics: false,
     redirect: (context, state) async {
       //TODO: La mettre ailleur
@@ -65,9 +73,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 name: AppRoute.globalTchat.name,
                 builder: (context, state) => const TchatView()),
             GoRoute(
-                path: 'createGroup',
-                name: AppRoute.createGroup.name,
-                builder: (context, state) => const CreateNewGroup()),
+                path: 'createConversation',
+                name: AppRoute.createConversation.name,
+                builder: (context, state) => const CreateNewConversation()),
+            GoRoute(
+                path: 'listConversations',
+                name: AppRoute.listConversations.name,
+                builder: (context, state) => const ListConversations()),
           ])
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),

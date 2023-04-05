@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/data/group_tchat_repository.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/create_group/presentation/create_group_state.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/data/conversations_repository.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create_group_state.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
 
 /*
@@ -12,12 +12,13 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/l
  - interact with repositories in the data layer
 */
 
-class CreateGroupController extends StateNotifier<CreateGroupState> {
-  final GroupTchatRepository groupRepository;
+class CreateConversationController
+    extends StateNotifier<ListConversationsState> {
+  final ConversationsRepository groupRepository;
   final AuthRepository authRepository;
-  CreateGroupController(
+  CreateConversationController(
       {required this.authRepository, required this.groupRepository})
-      : super(CreateGroupState()) {
+      : super(ListConversationsState()) {
     retrieveAllUsers();
   }
 
@@ -66,6 +67,7 @@ class CreateGroupController extends StateNotifier<CreateGroupState> {
   Future<AsyncValue<String>> createGroupTchat() async {
     state = state.copyWith(value: const AsyncLoading());
     try {
+      ///En vrai inutile car le router check avant de load la page.
       if (authRepository.currentUser == null) {
         final errorMessage =
             "Vous devez être connecté pour éffectuer cette opération".hardcoded;
@@ -74,8 +76,11 @@ class CreateGroupController extends StateNotifier<CreateGroupState> {
         return AsyncError(errorMessage, StackTrace.current);
       }
       final ownerID = authRepository.currentUser?.uid;
-      final members = state.selectedUsers.map((member) => member.uid).toList();
-      final groupId = await groupRepository.createGroupTchat(ownerID!, members);
+      final members = [
+        ...state.selectedUsers.map((member) => member.uid).toList(),
+        ownerID!
+      ];
+      final groupId = await groupRepository.createGroupTchat(ownerID, members);
       state = state.copyWith(value: const AsyncData(null));
       return AsyncData(groupId);
     } catch (err, st) {
@@ -83,13 +88,17 @@ class CreateGroupController extends StateNotifier<CreateGroupState> {
       return AsyncError(err, st);
     }
   }
+
+  //si imageUrl == null alors afficher l'image de l'autre user
+  //sinon si c un grp, retourner null et afficher une image de groupe
 }
 
-final CreateGroupControllerProvider =
-    StateNotifierProvider<CreateGroupController, CreateGroupState>((ref) {
-  final GroupTchatRepository groupTchatRepo =
+final CreateConversationControllerProvider =
+    StateNotifierProvider<CreateConversationController, ListConversationsState>(
+        (ref) {
+  final ConversationsRepository groupTchatRepo =
       ref.watch(GroupTchatRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
-  return CreateGroupController(
+  return CreateConversationController(
       authRepository: authRepo, groupRepository: groupTchatRepo);
 });

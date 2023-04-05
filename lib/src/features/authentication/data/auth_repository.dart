@@ -27,6 +27,7 @@ class AuthRepository {
 
   AppUser? get currentUser => _actualUser;
 
+
   Stream<User?> authStateChange() => auth.authStateChanges();
   //Stream écoutant le stream Auth de firebase et émettant son propre event
   //pour uddate la route de goRouter. J'ai du arrêter d'utiliser le stream de firebase
@@ -89,7 +90,6 @@ class AuthRepository {
     }
   }
 
-  ///TODO: Doit être agnostique (ne pas utiliser AppUser)
   Future<AppUser?> retrieveUserFromUid(String uid) async {
     var req = await firestore.collection('users').doc(uid).get();
     var userData = req.data();
@@ -101,7 +101,6 @@ class AuthRepository {
     }
     return null;
   }
-
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
