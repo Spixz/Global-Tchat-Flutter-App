@@ -17,26 +17,21 @@ class AuthRepository {
       debugPrint("Firebase auth modification");
       _actualUser = (user != null) ? await retrieveUserFromUid(user.uid) : null;
       userStreamController.add(_actualUser);
-      // if (user != null) {
-      //   _actualUser = await retrieveUserFromUid(user.uid);
-      //   userStreamController.add(_actualUser);
-      //   debugPrint(_actualUser.toString());
-      // }
     });
   }
 
   AppUser? get currentUser => _actualUser;
 
-
-  Stream<User?> authStateChange() => auth.authStateChanges();
+  Stream<User?> authStateChange() =>
+      auth.authStateChanges(); //Stream de firebase
+  StreamController<AppUser?> userStreamController =
+      StreamController<AppUser?>.broadcast();
   //Stream écoutant le stream Auth de firebase et émettant son propre event
   //pour uddate la route de goRouter. J'ai du arrêter d'utiliser le stream de firebase
   //car je l'écoutais puis faisais des modifications sur _actualUser. Or c'est modifications
   //survenaient après l'émission de l'event et donc goRouter n'avait pas accès à
   //la valeur de _actualUser mise à jour.
   //https://medium.com/flutter-community/flutter-stream-basics-for-beginners-eda23e44e32f
-  StreamController<AppUser?> userStreamController =
-      StreamController<AppUser?>.broadcast();
 
   Stream userStream() => userStreamController.stream;
 

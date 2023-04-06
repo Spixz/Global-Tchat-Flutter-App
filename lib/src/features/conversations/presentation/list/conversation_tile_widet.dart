@@ -7,8 +7,8 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/l
 class ConversationTile extends StatefulWidget {
   final String actualUserUid;
   final ConversationWithMembers conversation;
-  late List<AppUser> membersWithoutActualUser;
-  ConversationTile(
+
+  const ConversationTile(
       {super.key, required this.actualUserUid, required this.conversation});
 
   @override
@@ -43,31 +43,31 @@ Pas opti si +100 part
 */
 
 class _ConversationTileState extends State<ConversationTile> {
+  late ConversationWithMembers _conversation;
+  late List<AppUser> _membersWithoutActualUser;
+
   @override
   void initState() {
-    widget.membersWithoutActualUser = widget.conversation.membersFilled
+    _conversation = widget.conversation;
+    _membersWithoutActualUser = _conversation.membersFilled
         .where((user) => user.uid != widget.actualUserUid)
         .toList();
     super.initState();
   }
 
-//Return the list of the members without the actual connected user.
-  // List<AppUser> get membersWithoutActualUser =>
-
-//faut que je fasse une fonction qui récupère à coup sur le second utilisateur.
   String _getTitle() {
-    if (widget.conversation.name != null) return widget.conversation.name!;
-    if (widget.conversation.membersFilled.length == 2) {
-      return widget.membersWithoutActualUser.first.username;
+    if (_conversation.name != null) return _conversation.name!;
+    if (_conversation.membersFilled.length == 2) {
+      return _membersWithoutActualUser.first.username;
     }
     return 'Conversation de groupe'.hardcoded;
   }
 
   String _getLastMessage() {
-    String? lastSender = widget.conversation.lastMessageSender;
-    String? lastMessage = widget.conversation.lastMessage;
+    String? lastSender = _conversation.lastMessageSender;
+    String? lastMessage = _conversation.lastMessage;
     if (lastMessage != null && lastSender != null) {
-      if (widget.conversation.membersFilled.length == 2) {
+      if (_conversation.membersFilled.length == 2) {
         return lastMessage;
       }
       return "$lastSender: $lastMessage";
@@ -76,24 +76,29 @@ class _ConversationTileState extends State<ConversationTile> {
   }
 
   String _getLastMessageDate() {
-    if (widget.conversation.lastMessageTimeSent == null) return "";
-    return DateFormat.Hm().format(widget.conversation.lastMessageTimeSent!);
+    if (_conversation.lastMessageTimeSent == null) return "";
+    return DateFormat.Hm().format(_conversation.lastMessageTimeSent!);
   }
 
   Widget _getConversationPicture() {
-    String? picture = widget.conversation.imageUrl;
-    if (picture != null) {}
-    if (widget.conversation.membersFilled.length == 2) {
-      if (widget.membersWithoutActualUser.first.profilePic.isNotEmpty) {
+    String? picture = _conversation.imageUrl;
+    if (picture != null) {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(picture),
+        radius: 30,
+      );
+    }
+    if (_conversation.membersFilled.length == 2) {
+      if (_membersWithoutActualUser.first.profilePic.isNotEmpty) {
         return CircleAvatar(
           backgroundImage: NetworkImage(
-            widget.membersWithoutActualUser.first.profilePic,
+            _membersWithoutActualUser.first.profilePic,
           ),
           radius: 30,
         );
       }
     }
-    if (widget.conversation.membersFilled.length > 2) {
+    if (_conversation.membersFilled.length > 2) {
       return const Icon(Icons.groups, size: 30);
     }
     return const Icon(Icons.account_circle, size: 30);

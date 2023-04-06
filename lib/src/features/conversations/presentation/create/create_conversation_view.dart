@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/search_result_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/selected_users_widget.dart';
@@ -29,6 +30,7 @@ class _CreateNewConversationState extends ConsumerState<CreateNewConversation> {
     groupId.whenData((value) {
       print("GROUP ID: $value");
       print("Redirection vers la conversation");
+      GoRouter.of(context).pop();
     });
   }
 
@@ -41,7 +43,6 @@ class _CreateNewConversationState extends ConsumerState<CreateNewConversation> {
     final state = ref.watch(CreateConversationControllerProvider);
     final searchResults = state.searchResults;
     final selectedUsers = state.selectedUsers;
-    print("BUILD");
 
     return Scaffold(
         appBar: AppBar(title: const Text('Create New Group')),

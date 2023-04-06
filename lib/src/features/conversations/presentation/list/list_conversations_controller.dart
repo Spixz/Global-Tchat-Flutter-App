@@ -7,37 +7,36 @@ class ListConversationsController
     extends StateNotifier<ListConversationsState> {
   final ConversationsRepository groupRepository;
   final AuthRepository authRepository;
+
   ListConversationsController(
       {required this.authRepository, required this.groupRepository})
       : super(ListConversationsState(value: const AsyncLoading())) {
-    //!  Le user est vide,
-    //! Je pense que comme le controller est init une seule fois, je dois
-    //! mettre un listen pour update le state du controller
-    // * Se mettre en loading
-    authRepository.userStream().listen((event) {
-      print("Changement de user détecté dans par le listController");
-      retrieveUserConversations(authRepository.currentUser!.uid);
-      // * Ne plus se mettre en loading
+    authRepository.userStream().listen((event) async {
+      if (authRepository.currentUser != null) {
+        retrieveUserConversation();
+      }
     });
   }
 
-//! Done
-  Future<void> retrieveUserConversations(String userId) async {
-    state = state.copyWith(value: const AsyncLoading());
-    var val = await groupRepository.retrieveUserConversationsFilledWithMembers(
-        authRepository.currentUser!.uid);
-    print(val);
-    state = state.copyWith(bindedConversations: val, value: AsyncData(val));
+  void retrieveUserConversation() {
+    groupRepository.getConversationInRealtime().listen(
+      (event) {
+        state = state.copyWith(value: const AsyncLoading());
+        state =
+            state.copyWith(bindedConversations: event, value: AsyncData(event));
+      },
+      onError: (err, st) {
+        state = state.copyWith(value: AsyncError(err, st));
+      },
+    );
   }
 }
 
-final listConversationsControllerProvider =
-    StateNotifierProvider<ListConversationsController, ListConversationsState>(
-        (ref) {
+final listConversationsControllerProvider = StateNotifierProvider.autoDispose<
+    ListConversationsController, ListConversationsState>((ref) {
   final ConversationsRepository groupTchatRepo =
       ref.watch(GroupTchatRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
-  // var streamm = ref.watch(authRepositoryUserStreamProvider);
 
   return ListConversationsController(
       authRepository: authRepo, groupRepository: groupTchatRepo);

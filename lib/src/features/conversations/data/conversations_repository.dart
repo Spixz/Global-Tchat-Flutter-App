@@ -4,13 +4,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
 
 class ConversationsRepository {
   final FirebaseFirestore firestore;
+  final AuthRepository auth;
 
-  ConversationsRepository({required this.firestore});
+  ConversationsRepository({required this.auth, required this.firestore});
 
   ///Transforme la liste des utilisateurs récupérer de la base de données
   ///en une liste d'AppUser
@@ -29,17 +31,10 @@ class ConversationsRepository {
     return userList.map((e) => AppUser.fromMap(e)).toList();
   }
 
-  ///TODO: Doit être agnostique (ne pas utiliser AppUser) c'est le controller qui doit faire le mapping
+//TODO: demander sur le slack si je peux dépendndre d'un autre repository
+//TODO: Ou si je dois mettre la logique qui supprimer l'user concerné dans un controller.
   Future<List<AppUser>> retrieveAllUsers() async {
     var snapshot = await firestore.collection('users').get();
-    // var collectionRef = firestore.collection('users');
-    // final dernierElementSnapshot = await collectionRef
-    //     .orderBy(FieldPath.documentId, descending: true)
-    //     .limit(1)
-    //     .get();
-    // final dernierElementData = dernierElementSnapshot.docs.first.data();
-    // print('single unit');
-    // print(dernierElementData);
     return Future.value(_snapshotToAppUsersList(snapshot));
   }
 
@@ -52,16 +47,6 @@ class ConversationsRepository {
     return item.id;
   }
 
-  Future<List<Conversation>> retrieveUserConversations(String userId) async {
-    var groupsRef = firestore.collection('groups');
-    var snapshot =
-        await groupsRef.where("members", arrayContains: userId).get();
-    return snapshot.docs.map((data) {
-      var conversation = data.data();
-      conversation['id'] = data.reference.id;
-      return Conversation.fromMap(conversation);
-    }).toList();
-  }
 
   Future<List<AppUser>> retrieveUsersFromList(List<String> uids) async {
     var usersRef = firestore.collection('users');
@@ -74,22 +59,27 @@ class ConversationsRepository {
     }).toList();
   }
 
-  Future<List<ConversationWithMembers>>
-      retrieveUserConversationsFilledWithMembers(String userId) async {
-    var groupsRef = firestore.collection('groups');
-    var snapshot =
-        await groupsRef.where("members", arrayContains: userId).get();
-    var res = await Future.wait(snapshot.docs.map((data) async {
-      var conversation = data.data();
-      conversation['id'] = data.reference.id;
-      Conversation conv = Conversation.fromMap(conversation);
-      List<AppUser> members = await retrieveUsersFromList(conv.members);
-      return ConversationWithMembers(conv, members);
-    }).toList());
-    return res;
+  Stream<List<ConversationWithMembers>> getConversationInRealtime() {
+    return firestore
+        .collection('groups')
+        .where('members', arrayContains: auth.currentUser!.uid)
+        .snapshots()
+        .asyncMap((event) async {
+      List<ConversationWithMembers> newConversations = [];
+      for (var document in event.docs) {
+        var conversation = document.data();
+        conversation['id'] = document.reference.id;
+        Conversation conv = Conversation.fromMap(conversation);
+        List<AppUser> members = await retrieveUsersFromList(conv.members);
+        newConversations.add(ConversationWithMembers(conv, members));
+      }
+      return newConversations;
+    });
   }
 }
 
 final GroupTchatRepositoryProvider = Provider<ConversationsRepository>((ref) {
-  return ConversationsRepository(firestore: FirebaseFirestore.instance);
+  final AuthRepository auth = ref.watch(authRepositoryProvider);
+  return ConversationsRepository(
+      auth: auth, firestore: FirebaseFirestore.instance);
 });

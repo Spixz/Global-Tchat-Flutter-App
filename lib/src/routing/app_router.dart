@@ -42,7 +42,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/';
         }
       } else {
-        if (['/tchat', '/account', '/'].contains(state.location)) {
+        if (['/tchat', '/account', '/', '/createConversation', '/listConversations'].contains(state.location)) {
           //TODO: add createGroup
           debugPrint(
               "Vous avez été redirigé sur le loggin car vous n'avez pas accès au home");
