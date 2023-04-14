@@ -10,16 +10,18 @@ class ListConversationsController
 
   ListConversationsController(
       {required this.authRepository, required this.groupRepository})
-      : super(ListConversationsState(value: const AsyncLoading())) {
+      : super(ListConversationsState(value: const AsyncData(null))) {
     authRepository.userStream().listen((event) async {
       if (authRepository.currentUser != null) {
+        state = state.copyWith(currentUserUid: authRepository.currentUser!.uid);
         retrieveUserConversation();
       }
     });
   }
 
+  ///Todo: je dois fakes les données qui viennent du stream encore une fois
   void retrieveUserConversation() {
-    groupRepository.getConversationInRealtime().listen(
+    groupRepository.getUserConversationsInformationsInRealtime().listen(
       (event) {
         state = state.copyWith(value: const AsyncLoading());
         state =
@@ -35,7 +37,7 @@ class ListConversationsController
 final listConversationsControllerProvider = StateNotifierProvider.autoDispose<
     ListConversationsController, ListConversationsState>((ref) {
   final ConversationsRepository groupTchatRepo =
-      ref.watch(GroupTchatRepositoryProvider);
+      ref.watch(conversationsRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
 
   return ListConversationsController(

@@ -5,6 +5,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/presentation/login_register_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_view.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/home/presentation/home_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/tchat_view.dart';
@@ -17,7 +18,8 @@ enum AppRoute {
   account,
   globalTchat,
   createConversation,
-  listConversations
+  listConversations,
+  displayConversation,
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -42,7 +44,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/';
         }
       } else {
-        if (['/tchat', '/account', '/', '/createConversation', '/listConversations'].contains(state.location)) {
+        if ([
+          '/tchat',
+          '/account',
+          '/',
+          '/createConversation',
+          '/listConversations',
+          'displayConversation',
+        ].contains(state.location)) {
           //TODO: add createGroup
           debugPrint(
               "Vous avez été redirigé sur le loggin car vous n'avez pas accès au home");
@@ -80,6 +89,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: 'listConversations',
                 name: AppRoute.listConversations.name,
                 builder: (context, state) => const ListConversations()),
+            GoRoute(
+                path: 'displayConversation/:id',
+                name: AppRoute.displayConversation.name,
+                builder: (context, state) {
+                  final conversationId = state.params['id'];
+                  print(conversationId);
+                  //ConversationWithMembers conversation = state.params['conversationBinded']; //from json
+                  return DisplayConversation(conversationId: conversationId);
+                }),
           ])
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),

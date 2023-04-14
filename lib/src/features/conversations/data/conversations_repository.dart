@@ -2,11 +2,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message_collection.dart';
 
 class ConversationsRepository {
   final FirebaseFirestore firestore;
@@ -42,13 +45,16 @@ class ConversationsRepository {
   Future<String> createGroupTchat(String ownerID, List<String> members) async {
     final collection = firestore.collection('groups');
     final newTchat = Conversation(
-        id: '', ownerId: ownerID, members: members, admins: [ownerID]);
+        id: '',
+        ownerId: ownerID,
+        members: members,
+        admins: [ownerID],
+        lastMessageTimeSent: DateTime.fromMicrosecondsSinceEpoch(0));
     final item = await collection.add(newTchat.toMap(withId: false));
     return item.id;
   }
 
-
-  Future<List<AppUser>> retrieveUsersFromList(List<String> uids) async {
+  Future<List<AppUser>> retrieveUsersObjectFromList(List<String> uids) async {
     var usersRef = firestore.collection('users');
     var snapshot =
         await usersRef.where(FieldPath.documentId, whereIn: uids).get();
@@ -59,7 +65,12 @@ class ConversationsRepository {
     }).toList();
   }
 
-  Stream<List<ConversationWithMembers>> getConversationInRealtime() {
+//Stream émettant les informations des conversations dans lesquels l'user
+//est présent.
+//En vrai c'est utile pour refresh la page des conversations pour savoir si un
+//new message a été ajouté.
+  Stream<List<ConversationWithMembers>>
+      getUserConversationsInformationsInRealtime() {
     return firestore
         .collection('groups')
         .where('members', arrayContains: auth.currentUser!.uid)
@@ -70,16 +81,81 @@ class ConversationsRepository {
         var conversation = document.data();
         conversation['id'] = document.reference.id;
         Conversation conv = Conversation.fromMap(conversation);
-        List<AppUser> members = await retrieveUsersFromList(conv.members);
+        List<AppUser> members = await retrieveUsersObjectFromList(conv.members);
         newConversations.add(ConversationWithMembers(conv, members));
       }
       return newConversations;
     });
   }
+
+//En vrai c'est bien comme ça on récupé les messages que quand ont est dans la conv (le screen)
+//Ca veut dire que les docs ne seront récup que si on est sur le screen de la conv.
+//Pour opti, ont pourrai garder en mémoire la date de la dernière lecture de ce stream
+//et ne récupérer que les messages supérieur à cette date.
+  Stream<MessageCollection> getMessagesFromConversationInRealtime(
+      String convId) {
+    final snapshot = firestore
+        .collection('messages')
+        .where(FieldPath.documentId, isEqualTo: convId)
+        .snapshots();
+    return snapshot.asyncMap((event) {
+      // print("Repo detection d'un message");
+      // for (var document in event.docs) {
+      //   print(document.data());
+      // }
+      var document = event.docs.first;
+      var messages = document.data();
+      messages['id'] = document.reference.id;
+      try {
+        MessageCollection.fromMap(messages);
+      } catch (err) {
+        print('Erreur lors de MessageCollection.fromMap()');
+        print(err);
+      }
+      return MessageCollection.fromMap(messages);
+    });
+  }
+
+/* Dans la plutpart des cas je voudrais ajouter un message du coup
+il vaut mieux appeller la méthode qui ajouter le message en priorité car ça sera
+moins chère que de call la qui créer le doc à chaques fois.
+*/
+  Future<void> sendMessage(String conversationId, Message message) async {
+    final collection = firestore.collection('messages');
+    try {
+      await collection.doc(conversationId).update({
+        'messages': FieldValue.arrayUnion([message.toMap()])
+      });
+      debugPrint("Repo: Nouveau message ajouté avec succès");
+    } catch (err) {
+      debugPrint("Le doc Message corespondant n'existant pas, il a été créer.");
+      await collection.doc(conversationId).set({
+        'messages': [message.toMap()]
+      });
+    }
+    try {
+      await firestore.collection('groups').doc(conversationId).update({
+        'lastMessage': message.content,
+        'lastMessageSender': message.senderId,
+        'lastMessageTimeSent': Timestamp.fromDate(message.createdAt),
+      });
+    } catch (err) {
+      print(err);
+    }
+    //TODO: Aussi l'ajouter dans la collection group (last message, last sender);
+  }
 }
 
-final GroupTchatRepositoryProvider = Provider<ConversationsRepository>((ref) {
+final conversationsRepositoryProvider =
+    Provider<ConversationsRepository>((ref) {
   final AuthRepository auth = ref.watch(authRepositoryProvider);
   return ConversationsRepository(
       auth: auth, firestore: FirebaseFirestore.instance);
+});
+
+final conversationWithMembersStreamProvider =
+    StreamProvider<List<ConversationWithMembers>>((ref) {
+  final ConversationsRepository repository =
+      ref.watch(conversationsRepositoryProvider);
+  return repository.getUserConversationsInformationsInRealtime();
 });

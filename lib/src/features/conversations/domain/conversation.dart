@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class Conversation {
@@ -14,7 +15,7 @@ class Conversation {
   final List<String>? banned;
   final String? lastMessage;
   final String? lastMessageSender;
-  final DateTime? lastMessageTimeSent;
+  final DateTime lastMessageTimeSent;
   final bool? lastMessageRead;
 
   Conversation({
@@ -28,7 +29,7 @@ class Conversation {
     this.banned,
     this.lastMessage,
     this.lastMessageSender,
-    this.lastMessageTimeSent,
+    required this.lastMessageTimeSent,
     this.lastMessageRead,
   });
 
@@ -74,7 +75,7 @@ class Conversation {
       'banned': banned,
       'lastMessage': lastMessage,
       'lastMessageSender': lastMessageSender,
-      'lastMessageTimeSent': lastMessageTimeSent?.millisecondsSinceEpoch,
+      'lastMessageTimeSent': Timestamp.fromDate(lastMessageTimeSent),
       'lastMessageRead': lastMessageRead,
     };
   }
@@ -101,10 +102,9 @@ class Conversation {
       lastMessageSender: map['lastMessageSender'] != null
           ? map['lastMessageSender'] as String
           : null,
-      lastMessageTimeSent: map['lastMessageTimeSent'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              map['lastMessageTimeSent'] as int)
-          : null,
+      lastMessageTimeSent:
+          // (map['lastMessageTimeSent'] as Timestamp).toDate(),
+          (map['lastMessageTimeSent'] as Timestamp).toDate(),
       lastMessageRead: map['lastMessageRead'] != null
           ? map['lastMessageRead'] as bool
           : null,

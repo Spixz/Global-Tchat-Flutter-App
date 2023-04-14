@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/keys.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
@@ -84,6 +85,7 @@ class _ConversationTileState extends State<ConversationTile> {
     String? picture = _conversation.imageUrl;
     if (picture != null) {
       return CircleAvatar(
+        key: keyConversationPictureNull,
         backgroundImage: NetworkImage(picture),
         radius: 30,
       );
@@ -91,6 +93,7 @@ class _ConversationTileState extends State<ConversationTile> {
     if (_conversation.membersFilled.length == 2) {
       if (_membersWithoutActualUser.first.profilePic.isNotEmpty) {
         return CircleAvatar(
+          key: keyConversationPictureOfUser,
           backgroundImage: NetworkImage(
             _membersWithoutActualUser.first.profilePic,
           ),
@@ -99,9 +102,11 @@ class _ConversationTileState extends State<ConversationTile> {
       }
     }
     if (_conversation.membersFilled.length > 2) {
-      return const Icon(Icons.groups, size: 30);
+      return const Icon(
+          key: keyConversationPictureGroupConversation, Icons.groups, size: 30);
     }
-    return const Icon(Icons.account_circle, size: 30);
+    return const Icon(
+        key: keyConversationPictureDefault, Icons.account_circle, size: 30);
   }
 
   @override

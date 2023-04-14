@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/app.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,7 @@ void main() async {
     if (stack is stack_trace.Chain) return stack.toTrace().vmTrace;
     return stack;
   };
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   // turn off the # in the URLs on the web
   usePathUrlStrategy();

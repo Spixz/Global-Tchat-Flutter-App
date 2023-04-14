@@ -97,7 +97,7 @@ final CreateConversationControllerProvider =
     StateNotifierProvider<CreateConversationController, ListConversationsState>(
         (ref) {
   final ConversationsRepository groupTchatRepo =
-      ref.watch(GroupTchatRepositoryProvider);
+      ref.watch(conversationsRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
   return CreateConversationController(
       authRepository: authRepo, groupRepository: groupTchatRepo);
