@@ -2,36 +2,34 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 
 class ListConversationsState {
   final AsyncValue value;
   final String currentUserUid;
-  final List<ConversationWithMembers> bindedConversations;
+  final List<ConversationWithMembers> conversationsWithUsersObjects;
   ListConversationsState({
     required this.value,
     this.currentUserUid = "",
-    this.bindedConversations = const [],
+    this.conversationsWithUsersObjects = const [],
   });
 
   ListConversationsState copyWith({
     AsyncValue? value,
     String? currentUserUid,
-    List<Conversation>? conversations,
-    List<ConversationWithMembers>? bindedConversations,
+    List<ConversationWithMembers>? conversationsWithUsersObjects,
   }) {
     return ListConversationsState(
       value: value ?? this.value,
       currentUserUid: currentUserUid ?? this.currentUserUid,
-      bindedConversations: bindedConversations ?? this.bindedConversations,
+      conversationsWithUsersObjects:
+          conversationsWithUsersObjects ?? this.conversationsWithUsersObjects,
     );
   }
 
   @override
   String toString() =>
-      'ListConversationsState(value: $value, currentUserUid: $currentUserUid, bindedConversations: $bindedConversations)';
+      'ListConversationsState(value: $value, currentUserUid: $currentUserUid, conversationsWithUsersObjects: $conversationsWithUsersObjects)';
 
   @override
   bool operator ==(covariant ListConversationsState other) {
@@ -39,10 +37,13 @@ class ListConversationsState {
 
     return other.value == value &&
         other.currentUserUid == currentUserUid &&
-        listEquals(other.bindedConversations, bindedConversations);
+        listEquals(
+            other.conversationsWithUsersObjects, conversationsWithUsersObjects);
   }
 
   @override
   int get hashCode =>
-      value.hashCode ^ bindedConversations.hashCode ^ currentUserUid.hashCode;
+      value.hashCode ^
+      conversationsWithUsersObjects.hashCode ^
+      currentUserUid.hashCode;
 }

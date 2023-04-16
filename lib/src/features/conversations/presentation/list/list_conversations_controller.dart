@@ -11,6 +11,10 @@ class ListConversationsController
   ListConversationsController(
       {required this.authRepository, required this.groupRepository})
       : super(ListConversationsState(value: const AsyncData(null))) {
+    _listenAuthStream();
+  }
+
+  void _listenAuthStream() {
     authRepository.userStream().listen((event) async {
       if (authRepository.currentUser != null) {
         state = state.copyWith(currentUserUid: authRepository.currentUser!.uid);
@@ -24,8 +28,8 @@ class ListConversationsController
     groupRepository.getUserConversationsInformationsInRealtime().listen(
       (event) {
         state = state.copyWith(value: const AsyncLoading());
-        state =
-            state.copyWith(bindedConversations: event, value: AsyncData(event));
+        state = state.copyWith(
+            conversationsWithUsersObjects: event, value: AsyncData(event));
       },
       onError: (err, st) {
         state = state.copyWith(value: AsyncError(err, st));

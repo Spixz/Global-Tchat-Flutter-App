@@ -7,22 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
 
-/*
-class Conversation {
-  final String id;
-  final String? name;
-  final String? description;
-  final String? imageUrl; 
-  final String ownerId;
-  final List<String> members;
-  final List<String>? admins;
-  final List<String>? banned;
-  final String? lastMessage;
-  final String? lastMessageSender;
-  final DateTime? lastMessageTimeSent;
-  final bool? lastMessageRead;
-*/
-
 //Comme l'obj conversation mais avec membersFilled en plus
 class ConversationWithMembers extends Conversation {
   final List<AppUser> membersFilled;
@@ -44,7 +28,7 @@ class ConversationWithMembers extends Conversation {
 
   @override
   String toString() {
-    return 'Conversation(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $membersFilled, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
+    return 'ConversationWithMembers(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $membersFilled, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
   }
 
   Map<String, dynamic> toMapSecond() {

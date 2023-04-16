@@ -4,6 +4,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/message_list_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/prompt_user_message.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
 
 class DisplayConversation extends ConsumerStatefulWidget {
   final conversationId;
@@ -25,6 +26,11 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(displayConversationControllerProvider(widget.conversationId),
+        (previous, state) {
+      state.value.showAlertDialogOnError(context);
+    });
+
     final state =
         ref.watch(displayConversationControllerProvider(widget.conversationId));
 
@@ -33,10 +39,10 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
       body: Column(
         children: [
           MessageList(
-              messages:
-                  state.messagesCollection?.messages ?? List<Message>.from([])),
+              messages: state.messagesFromConversation?.messages ??
+                  List<Message>.from([]),
+              connectedUserUid: state.currentUserUid),
           PromptUserMessage(submitMessage: submitMessage),
-          // Text("Group name : ${state.bindedConversation?.name}"),
         ],
       ),
     );

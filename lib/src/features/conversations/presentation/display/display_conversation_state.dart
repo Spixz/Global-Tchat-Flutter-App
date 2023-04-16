@@ -3,37 +3,39 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message_collection.dart';
 
 class DisplayConversationState {
   final AsyncValue value;
   final String currentUserUid;
   final String conversationId;
-  final ConversationWithMembers? bindedConversation;
-  final MessageCollection? messagesCollection;
+  final ConversationWithMembers?
+      conversationInformations; //from conversationInformations (group) stream
+  final MessageCollection? messagesFromConversation; //from messages stream
 
   DisplayConversationState({
     required this.value,
     required this.currentUserUid,
     required this.conversationId,
-    this.messagesCollection,
-    this.bindedConversation,
+    this.messagesFromConversation,
+    this.conversationInformations,
   });
 
   DisplayConversationState copyWith({
     AsyncValue? value,
     String? currentUserUid,
     String? conversationId,
-    ConversationWithMembers? bindedConversation,
-    MessageCollection? messagesCollection,
+    ConversationWithMembers? conversationInformations,
+    MessageCollection? messagesFromConversation,
   }) {
     return DisplayConversationState(
       value: value ?? this.value,
       currentUserUid: currentUserUid ?? this.currentUserUid,
       conversationId: conversationId ?? this.conversationId,
-      bindedConversation: bindedConversation ?? this.bindedConversation,
-      messagesCollection: messagesCollection ?? this.messagesCollection,
+      conversationInformations:
+          conversationInformations ?? this.conversationInformations,
+      messagesFromConversation: messagesFromConversation ?? this.messagesFromConversation,
     );
   }
 
@@ -42,8 +44,8 @@ class DisplayConversationState {
       'value': value,
       'currentUserUid': currentUserUid,
       'conversationId': conversationId,
-      'bindedConversation': bindedConversation?.toMapSecond(),
-      'messagesCollection': messagesCollection?.toMap(),
+      'conversationInformations': conversationInformations?.toMapSecond(),
+      'messagesFromConversation': messagesFromConversation?.toMap(),
     };
   }
 
@@ -62,7 +64,7 @@ class DisplayConversationState {
 
   @override
   String toString() {
-    return 'DisplayConversationState(value: $value, currentUserUid: $currentUserUid, conversationId: $conversationId, bindedConversation: $bindedConversation, messageCollection: $messagesCollection)';
+    return 'DisplayConversationState(value: $value, currentUserUid: $currentUserUid, conversationId: $conversationId, conversationInformations: $conversationInformations, messagesFromConversation: $messagesFromConversation)';
   }
 
   @override
@@ -72,8 +74,8 @@ class DisplayConversationState {
     return other.value == value &&
         other.currentUserUid == currentUserUid &&
         other.conversationId == conversationId &&
-        other.bindedConversation == bindedConversation &&
-        other.messagesCollection == messagesCollection;
+        other.conversationInformations == conversationInformations &&
+        other.messagesFromConversation == messagesFromConversation;
   }
 
   @override
@@ -81,7 +83,7 @@ class DisplayConversationState {
     return value.hashCode ^
         currentUserUid.hashCode ^
         conversationId.hashCode ^
-        bindedConversation.hashCode ^
-        messagesCollection.hashCode;
+        conversationInformations.hashCode ^
+        messagesFromConversation.hashCode;
   }
 }

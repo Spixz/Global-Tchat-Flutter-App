@@ -36,7 +36,7 @@ class CreateConversationController
 
   void searchUser() {
     state = state.copyWith(value: const AsyncLoading());
-    final query = state.searchQuery;
+    final query = state.searchQuery.toLowerCase();
     final searchResult = state.allUsersList
         .where((user) => user.username.toLowerCase().startsWith(query))
         .toList();

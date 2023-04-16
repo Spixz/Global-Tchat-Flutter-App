@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message_collection.dart';
 
@@ -43,15 +43,20 @@ class ConversationsRepository {
 
   ///Je ne passe pas de GroupTchat car le repository doit être agnostique
   Future<String> createGroupTchat(String ownerID, List<String> members) async {
-    final collection = firestore.collection('groups');
+    final conversationCollection = firestore.collection('groups');
+    final messageCollection = firestore.collection('messages');
     final newTchat = Conversation(
         id: '',
         ownerId: ownerID,
         members: members,
         admins: [ownerID],
         lastMessageTimeSent: DateTime.fromMicrosecondsSinceEpoch(0));
-    final item = await collection.add(newTchat.toMap(withId: false));
-    return item.id;
+    final group =
+        await conversationCollection.add(newTchat.toMap(withId: false));
+    await messageCollection.doc(group.id).set({
+      'messages': [],
+    });
+    return group.id;
   }
 
   Future<List<AppUser>> retrieveUsersObjectFromList(List<String> uids) async {
@@ -99,19 +104,10 @@ class ConversationsRepository {
         .where(FieldPath.documentId, isEqualTo: convId)
         .snapshots();
     return snapshot.asyncMap((event) {
-      // print("Repo detection d'un message");
-      // for (var document in event.docs) {
-      //   print(document.data());
-      // }
+      debugPrint("Mouvement dans les messages");
       var document = event.docs.first;
       var messages = document.data();
       messages['id'] = document.reference.id;
-      try {
-        MessageCollection.fromMap(messages);
-      } catch (err) {
-        print('Erreur lors de MessageCollection.fromMap()');
-        print(err);
-      }
       return MessageCollection.fromMap(messages);
     });
   }
@@ -133,15 +129,12 @@ moins chère que de call la qui créer le doc à chaques fois.
         'messages': [message.toMap()]
       });
     }
-    try {
-      await firestore.collection('groups').doc(conversationId).update({
-        'lastMessage': message.content,
-        'lastMessageSender': message.senderId,
-        'lastMessageTimeSent': Timestamp.fromDate(message.createdAt),
-      });
-    } catch (err) {
-      print(err);
-    }
+    await firestore.collection('groups').doc(conversationId).update({
+      'lastMessage': message.content,
+      'lastMessageSender': message.senderId,
+      'lastMessageTimeSent': Timestamp.fromDate(message.createdAt),
+    });
+
     //TODO: Aussi l'ajouter dans la collection group (last message, last sender);
   }
 }

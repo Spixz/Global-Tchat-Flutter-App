@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
@@ -16,24 +17,10 @@ class DisplayConversationController
       required conversationId})
       : super(DisplayConversationState(
             value: const AsyncData(null),
-            currentUserUid: "",
+            currentUserUid: authRepository.currentUser!.uid,
             conversationId: conversationId)) {
-    listenUserIdentyStream();
     listenUserConversationInformationStream();
     listenMessagesFromConversationStream();
-    // conversationsRepository.fuck().listen((event) {
-    //   print("du nouveau dans la collecitons message!");
-    // });
-  }
-
-  void listenUserIdentyStream() {
-    authRepository.userStream().listen((event) async {
-      if (authRepository.currentUser != null) {
-        print(
-            "L'user id actuel depuis le display controller est : ${authRepository.currentUser!.uid}");
-        state = state.copyWith(currentUserUid: authRepository.currentUser!.uid);
-      }
-    });
   }
 
 //Ecoute le stream des informations des conversations et modifie le state
@@ -44,37 +31,39 @@ class DisplayConversationController
         try {
           var conv =
               event.firstWhere((element) => element.id == state.conversationId);
-          state = state.copyWith(bindedConversation: conv);
-          print(state.bindedConversation);
+          state = state.copyWith(conversationInformations: conv);
+          _addUsernamesToMessages();
         } catch (err, st) {
+          print("Erreur dans listenUserConversationInformationStream");
+          print(st);
           state = state.copyWith(value: AsyncError(err, st));
         }
       },
       onError: (err, st) {
         state = state.copyWith(value: AsyncError(err, st));
-        //TODO: handle les erreurs dans la view
+        debugPrint(st);
       },
     );
   }
 
   void listenMessagesFromConversationStream() {
-    //TODO: En dernier recours, je peux envoyer l'id de la conv au stream du repo.
+    debugPrint(
+        "Dans listenMessagesFromConversationStream ${state.conversationId}");
     conversationsRepository
         .getMessagesFromConversationInRealtime(state.conversationId)
         .listen(
-      (messages) async {
+      (messagesInstance) async {
         try {
-          print("Un nouveau message à été émis dans une conv de l'user");
-          // print(messages);
-          state = state.copyWith(messagesCollection: messages);
-          //n'a pas rebuild le widget ?!
+          debugPrint("Un nouveau message à été émis dans une conv de l'user");
+          state = state.copyWith(messagesFromConversation: messagesInstance);
+          _addUsernamesToMessages();
         } catch (err, st) {
           state = state.copyWith(value: AsyncError(err, st));
         }
       },
       onError: (err, st) {
         state = state.copyWith(value: AsyncError(err, st));
-        //TODO: handle les erreurs dans la view
+        print(st);
       },
     );
   }
@@ -91,13 +80,42 @@ class DisplayConversationController
         repliedTo: "",
         repliedMessage: "",
         repliedMessageType: MessageType.text);
+    print("Message envoyé");
+    print(newMsg);
     await conversationsRepository.sendMessage(state.conversationId, newMsg);
+  }
+
+//Ajoute le nom des users aux messages grâce à leurs uids.
+  void _addUsernamesToMessages() {
+    if (state.conversationInformations != null &&
+        state.messagesFromConversation != null) {
+      List<Message> msg = [];
+      for (var message in state.messagesFromConversation!.messages) {
+        String senderUser = state.conversationInformations!.membersFilled
+            .firstWhere((element) => element.uid == message.senderId)
+            .username;
+
+        String repliedToUsername = (message.repliedTo.isNotEmpty)
+            ? state.conversationInformations!.membersFilled
+                .firstWhere(
+                    (element) => element.uid == message.repliedToUsername)
+                .username
+            : "";
+        msg.add(message.copyWith(
+            senderUsername: senderUser, repliedToUsername: repliedToUsername));
+      }
+
+      state = state.copyWith(
+          messagesFromConversation:
+              state.messagesFromConversation!.copyWith(messages: msg));
+    }
   }
 }
 
-final displayConversationControllerProvider = StateNotifierProvider.family
-    .autoDispose<DisplayConversationController, DisplayConversationState,
-        String>((ref, conversationId) {
+final displayConversationControllerProvider = StateNotifierProvider.family<
+    DisplayConversationController,
+    DisplayConversationState,
+    String>((ref, conversationId) {
   final ConversationsRepository conversationsRepo =
       ref.watch(conversationsRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);

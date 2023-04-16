@@ -33,7 +33,7 @@ class AuthRepository {
   //la valeur de _actualUser mise à jour.
   //https://medium.com/flutter-community/flutter-stream-basics-for-beginners-eda23e44e32f
 
-  Stream userStream() => userStreamController.stream;
+  Stream<AppUser?> userStream() => userStreamController.stream;
 
   Future<dynamic> signInUserWithEmailAndPassword(
       String email, String password) async {
@@ -96,6 +96,9 @@ class AuthRepository {
     }
     return null;
   }
+
+  final authRepositoryUserStreamProvider =
+      StreamProvider((ref) => ref.watch(authRepositoryProvider).userStream());
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -108,7 +111,5 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 //   return authRepo.authStateChange();
 // });
 
-final authRepositoryUserStreamProvider = StreamProvider((ref) {
-  final authRepo = ref.watch(authRepositoryProvider);
-  return authRepo.userStreamController.stream; //userStream();
-});
+final authRepositoryUserStreamProvider =
+    StreamProvider((ref) => ref.watch(authRepositoryProvider).userStream());

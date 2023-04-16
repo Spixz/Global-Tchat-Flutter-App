@@ -4,14 +4,16 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 
 class MessageBody extends ConsumerWidget {
   final Message message;
-  const MessageBody({super.key, required this.message});
+  final String connectedUserUid;
+
+  const MessageBody({super.key, required this.message, required this.connectedUserUid});
   //TODO: ca serai bien me mettre un provider ici pour aligner en fonction de l'envoyeur
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final connectedUser = ref.watch(userProvider);
     var size = MediaQuery.of(context).size;
-    bool isSender = true; //(message.senderId == connectedUser.uid);
+    bool isSender = message.senderId == connectedUserUid;
 
     return Align(
         alignment: (isSender ? Alignment.centerRight : Alignment.centerLeft),
@@ -30,7 +32,7 @@ class MessageBody extends ConsumerWidget {
                   : CrossAxisAlignment.start),
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(message.senderId,
+                Text(message.senderUsername,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 3),

@@ -9,7 +9,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/c
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationBinded.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/conversation_tile_widget.dart';
 
 final firestoreInstance = FakeFirebaseFirestore();
@@ -99,7 +99,8 @@ void main() async {
                   Conversation(
                       id: "01",
                       members: [cyril.uid, jackMa.uid],
-                      ownerId: cyril.uid),
+                      ownerId: cyril.uid,
+                      lastMessageTimeSent: DateTime.now()),
                   [cyril, jackMa])),
         ),
       )));
@@ -126,7 +127,8 @@ void main() async {
                   Conversation(
                       id: "01",
                       members: [cyril.uid, john.uid],
-                      ownerId: cyril.uid),
+                      ownerId: cyril.uid,
+                      lastMessageTimeSent: DateTime.now()),
                   [cyril, john])),
         ),
       )));
@@ -154,12 +156,12 @@ void main() async {
               actualUserUid: fakeUsers[0].uid,
               conversation: ConversationWithMembers(
                   Conversation(
-                    id: "01",
-                    members: [cyril.uid, john.uid, jackMa.uid],
-                    ownerId: cyril.uid,
-                    lastMessage: lastMessage,
-                    lastMessageSender: lastSender.username,
-                  ),
+                      id: "01",
+                      members: [cyril.uid, john.uid, jackMa.uid],
+                      ownerId: cyril.uid,
+                      lastMessage: lastMessage,
+                      lastMessageSender: lastSender.username,
+                      lastMessageTimeSent: DateTime.now()),
                   [cyril, jackMa, john])),
         ),
       )));

@@ -14,6 +14,8 @@ class Message {
   final String repliedTo;
   final String repliedMessage; //Il le stock pour pas avoir à call je pense.
   final MessageType repliedMessageType;
+  final String senderUsername;
+  final String repliedToUsername;
 
   Message({
     required this.id, //facultatif
@@ -25,6 +27,8 @@ class Message {
     required this.repliedTo,
     required this.repliedMessage,
     required this.repliedMessageType,
+    this.senderUsername = "",
+    this.repliedToUsername = "",
   });
 
   Message copyWith({
@@ -37,6 +41,8 @@ class Message {
     String? repliedTo,
     String? repliedMessage,
     MessageType? repliedMessageType,
+    String? senderUsername,
+    String? repliedToUsername,
   }) {
     return Message(
       id: id ?? this.id,
@@ -48,6 +54,8 @@ class Message {
       repliedTo: repliedTo ?? this.repliedTo,
       repliedMessage: repliedMessage ?? this.repliedMessage,
       repliedMessageType: repliedMessageType ?? this.repliedMessageType,
+      senderUsername: senderUsername ?? this.senderUsername,
+      repliedToUsername: repliedToUsername ?? this.repliedToUsername,
     );
   }
 
@@ -62,6 +70,8 @@ class Message {
       'repliedTo': repliedTo,
       'repliedMessage': repliedMessage,
       'repliedMessageType': repliedMessageType.toString(),
+      'senderUsername': senderUsername,
+      'repliedToUsername': repliedToUsername,
     };
   }
 
@@ -76,6 +86,12 @@ class Message {
       repliedTo: map['repliedTo'] as String,
       repliedMessage: map['repliedMessage'] as String,
       repliedMessageType: MessageType.values.byName(map['repliedMessageType']),
+      senderUsername: (map.containsKey('senderUsername'))
+          ? map['senderUsername'] as String
+          : "",
+      repliedToUsername: (map.containsKey('repliedToUsername'))
+          ? map['repliedToUsername'] as String
+          : "",
     );
   }
 
@@ -86,7 +102,7 @@ class Message {
 
   @override
   String toString() {
-    return 'Message(id: $id, content: $content, senderId: $senderId, createdAt: $createdAt, type: $type, isSeen: $isSeen, repliedTo: $repliedTo, repliedMessage: $repliedMessage, repliedMessageType: $repliedMessageType)';
+    return 'Message(id: $id, content: $content, senderId: $senderId, createdAt: $createdAt, type: $type, isSeen: $isSeen, repliedTo: $repliedTo, repliedMessage: $repliedMessage, repliedMessageType: $repliedMessageType , senderUsername: $senderUsername, repliedToUsername: $repliedToUsername)';
   }
 
   @override
@@ -101,7 +117,9 @@ class Message {
         other.isSeen == isSeen &&
         other.repliedTo == repliedTo &&
         other.repliedMessage == repliedMessage &&
-        other.repliedMessageType == repliedMessageType;
+        other.repliedMessageType == repliedMessageType &&
+        other.senderUsername == senderUsername &&
+        other.repliedToUsername == repliedToUsername;
   }
 
   @override
@@ -114,6 +132,8 @@ class Message {
         isSeen.hashCode ^
         repliedTo.hashCode ^
         repliedMessage.hashCode ^
-        repliedMessageType.hashCode;
+        repliedMessageType.hashCode ^
+        senderUsername.hashCode ^
+        repliedToUsername.hashCode;
   }
 }

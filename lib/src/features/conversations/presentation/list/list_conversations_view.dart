@@ -29,23 +29,25 @@ class _ListConversationsState extends ConsumerState<ListConversations> {
     return Scaffold(
         appBar: AppBar(title: const Text('Conversations')),
         body: state.value.when(
-            data: (data) => (state.bindedConversations.isNotEmpty)
+            data: (data) => (state.conversationsWithUsersObjects.isNotEmpty)
                 ? ListView.builder(
-                    itemCount: state.bindedConversations.length,
+                    itemCount: state.conversationsWithUsersObjects.length,
                     itemBuilder: (context, index) {
                       return InkWell(
-                        key: ValueKey(
-                            state.bindedConversations[index].hashCodeParent),
+                        key: ValueKey(state.conversationsWithUsersObjects[index]
+                            .hashCodeParent),
                         onTap: () => GoRouter.of(context).pushNamed(
                             AppRoute.displayConversation.name,
                             params: {
-                              'id': state.bindedConversations[index].id
+                              'id':
+                                  state.conversationsWithUsersObjects[index].id
                             }),
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: ConversationTile(
                               actualUserUid: state.currentUserUid,
-                              conversation: state.bindedConversations[index]),
+                              conversation:
+                                  state.conversationsWithUsersObjects[index]),
                         ),
                       );
                     })
