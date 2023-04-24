@@ -8,7 +8,6 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/home/presentation/home_screen.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/tchat/presentation/tchat_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/go_router_refresh_stream.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/not_found_screen.dart';
 
@@ -16,7 +15,6 @@ enum AppRoute {
   home,
   login,
   account,
-  globalTchat,
   createConversation,
   listConversations,
   displayConversation,
@@ -45,7 +43,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
       } else {
         if ([
-          '/tchat',
           '/account',
           '/',
           '/createConversation',
@@ -77,10 +74,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: 'account',
                 name: AppRoute.account.name,
                 builder: (context, state) => const AccountScreen()),
-            GoRoute(
-                path: 'tchat',
-                name: AppRoute.globalTchat.name,
-                builder: (context, state) => const TchatView()),
             GoRoute(
                 path: 'createConversation',
                 name: AppRoute.createConversation.name,

@@ -1,10 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
+import 'package:file_picker/file_picker.dart';
 
 class PromptUserMessage extends ConsumerStatefulWidget {
   final void Function(String) submitMessage;
-  const PromptUserMessage({super.key, required this.submitMessage});
+  final void Function(String, Uint8List) sendFile;
+  const PromptUserMessage(
+      {super.key, required this.submitMessage, required this.sendFile});
 
   @override
   ConsumerState<PromptUserMessage> createState() => _PromptUserMessageState();
@@ -25,6 +30,19 @@ class _PromptUserMessageState extends ConsumerState<PromptUserMessage> {
   void dispose() {
     _usernameController.dispose();
     super.dispose();
+  }
+
+  void selectAndSendFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'gif', 'svg', 'bmp'],
+    );
+
+    if (result != null) {
+      Uint8List? fileBytes = result.files.first.bytes;
+      String filename = result.files.first.name;
+      widget.sendFile('upload/$filename', fileBytes!);
+    }
   }
 
   void submitMessage(String msg) {
@@ -70,7 +88,9 @@ class _PromptUserMessageState extends ConsumerState<PromptUserMessage> {
             ),
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                selectAndSendFile();
+              },
               icon: const Icon(Icons.camera_alt, color: Colors.grey)),
         ],
       ),

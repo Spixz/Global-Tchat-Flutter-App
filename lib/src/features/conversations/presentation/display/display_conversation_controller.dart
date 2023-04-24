@@ -69,20 +69,30 @@ class DisplayConversationController
   }
 
 //message collction est vide, il faut fixer ça.
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage(MessageType type, String content) async {
     final newMsg = Message(
         id: "",
-        content: message,
+        content: content,
         senderId: state.currentUserUid,
         createdAt: DateTime.now(),
         type: MessageType.text,
         isSeen: false,
         repliedTo: "",
         repliedMessage: "",
-        repliedMessageType: MessageType.text);
+        repliedMessageType: type);
     print("Message envoyé");
     print(newMsg);
     await conversationsRepository.sendMessage(state.conversationId, newMsg);
+  }
+
+  void sendFile(String fileDest, Uint8List? uint8list) async {
+    state = state.copyWith(value: const AsyncLoading());
+    final value = await AsyncValue.guard(() async {
+      final link =
+          await conversationsRepository.uploadFile(fileDest, uint8list);
+      await sendMessage(MessageType.image, link);
+    });
+    state = state.copyWith(value: value);
   }
 
 //Ajoute le nom des users aux messages grâce à leurs uids.

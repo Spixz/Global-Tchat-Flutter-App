@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/message_list_widget.dart';
@@ -16,13 +19,15 @@ class DisplayConversation extends ConsumerStatefulWidget {
 }
 
 class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
-  void submitMessage(String message) {
-    print("Envoie du message");
-    ref
-        .read(displayConversationControllerProvider(widget.conversationId)
-            .notifier)
-        .sendMessage(message);
-  }
+  void submitMessage(String message) => ref
+      .read(
+          displayConversationControllerProvider(widget.conversationId).notifier)
+      .sendMessage(MessageType.text, message);
+
+  void sendFile(String fileDest, Uint8List? uint8list) => ref
+      .read(
+          displayConversationControllerProvider(widget.conversationId).notifier)
+      .sendFile(fileDest, uint8list);
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +47,7 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
               messages: state.messagesFromConversation?.messages ??
                   List<Message>.from([]),
               connectedUserUid: state.currentUserUid),
-          PromptUserMessage(submitMessage: submitMessage),
+          PromptUserMessage(submitMessage: submitMessage, sendFile: sendFile),
         ],
       ),
     );

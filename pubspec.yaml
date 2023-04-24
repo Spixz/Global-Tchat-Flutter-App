@@ -50,6 +50,9 @@ dependencies:
   fake_cloud_firestore: ^2.4.1+1
   firebase_auth_mocks: ^0.11.0
   flutter_dotenv: ^5.0.2
+  firebase_storage: ^11.0.16
+  file_picker: ^5.2.11
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:

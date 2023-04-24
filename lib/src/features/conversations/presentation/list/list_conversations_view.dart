@@ -5,6 +5,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/c
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/conversation_tile_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_controller.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/long_press_popup_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/app_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
@@ -18,6 +19,12 @@ class ListConversations extends ConsumerStatefulWidget {
 }
 
 class _ListConversationsState extends ConsumerState<ListConversations> {
+  void deleteConversation(String conversationId) {
+    ref
+        .read(listConversationsControllerProvider.notifier)
+        .deleteConversation(conversationId);
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(listConversationsControllerProvider, (previous, state) {
@@ -42,6 +49,13 @@ class _ListConversationsState extends ConsumerState<ListConversations> {
                               'id':
                                   state.conversationsWithUsersObjects[index].id
                             }),
+                        onLongPress: () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) => ConversationPopup(
+                              conversationId:
+                                  state.conversationsWithUsersObjects[index].id,
+                              deleteConversation: deleteConversation),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: ConversationTile(

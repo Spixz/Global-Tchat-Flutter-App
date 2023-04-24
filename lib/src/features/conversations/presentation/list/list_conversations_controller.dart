@@ -36,6 +36,13 @@ class ListConversationsController
       },
     );
   }
+
+  void deleteConversation(String conversationId) async {
+    state = state.copyWith(value: const AsyncLoading());
+    final data = await AsyncValue.guard(
+        () => groupRepository.deleteConversation(conversationId));
+    state = state.copyWith(value: data);
+  }
 }
 
 final listConversationsControllerProvider = StateNotifierProvider.autoDispose<

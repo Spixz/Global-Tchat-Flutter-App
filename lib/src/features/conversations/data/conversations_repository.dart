@@ -4,18 +4,22 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mime/mime.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversation.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message_collection.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ConversationsRepository {
   final FirebaseFirestore firestore;
   final AuthRepository auth;
+  final FirebaseStorage storage;
 
-  ConversationsRepository({required this.auth, required this.firestore});
+  ConversationsRepository(
+      {required this.auth, required this.firestore, required this.storage});
 
   ///Transforme la liste des utilisateurs récupérer de la base de données
   ///en une liste d'AppUser
@@ -57,6 +61,13 @@ class ConversationsRepository {
       'messages': [],
     });
     return group.id;
+  }
+
+  Future deleteConversation(String conversationId) async {
+    final conversationCollection = firestore.collection('groups');
+    final messageCollection = firestore.collection('messages');
+    await conversationCollection.doc(conversationId).delete();
+    await messageCollection.doc(conversationId).delete();
   }
 
   Future<List<AppUser>> retrieveUsersObjectFromList(List<String> uids) async {
@@ -134,8 +145,20 @@ moins chère que de call la qui créer le doc à chaques fois.
       'lastMessageSender': message.senderId,
       'lastMessageTimeSent': Timestamp.fromDate(message.createdAt),
     });
+  }
 
-    //TODO: Aussi l'ajouter dans la collection group (last message, last sender);
+  Future<String> uploadFile(String destpath, Uint8List? uint8list) async {
+    final fileRef = storage.ref(destpath);
+    if (uint8list != null) {
+      UploadTask upload = fileRef.putData(
+          uint8list,
+          SettableMetadata(
+              contentType: lookupMimeType("", headerBytes: uint8list)));
+      await upload.asStream().last;
+      print("fin upload");
+      return await fileRef.getDownloadURL();
+    }
+    return Future.value("");
   }
 }
 
@@ -143,7 +166,9 @@ final conversationsRepositoryProvider =
     Provider<ConversationsRepository>((ref) {
   final AuthRepository auth = ref.watch(authRepositoryProvider);
   return ConversationsRepository(
-      auth: auth, firestore: FirebaseFirestore.instance);
+      auth: auth,
+      firestore: FirebaseFirestore.instance,
+      storage: FirebaseStorage.instance);
 });
 
 final conversationWithMembersStreamProvider =
