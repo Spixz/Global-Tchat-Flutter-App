@@ -75,7 +75,7 @@ class DisplayConversationController
         content: content,
         senderId: state.currentUserUid,
         createdAt: DateTime.now(),
-        type: MessageType.text,
+        type: type,
         isSeen: false,
         repliedTo: "",
         repliedMessage: "",

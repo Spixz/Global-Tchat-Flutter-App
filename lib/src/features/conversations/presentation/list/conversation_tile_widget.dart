@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/keys.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
@@ -67,18 +68,21 @@ class _ConversationTileState extends State<ConversationTile> {
   String _getLastMessage() {
     String? lastSender = _conversation.lastMessageSender;
     String? lastMessage = _conversation.lastMessage;
+
+    if (_conversation.lastMessageType == MessageType.image) {
+      lastMessage = 'Image'.hardcoded;
+    }
     if (lastMessage != null && lastSender != null) {
-      if (_conversation.membersFilled.length == 2) {
-        return lastMessage;
-      }
-      return "$lastSender: $lastMessage";
+      return (_conversation.membersFilled.length == 2)
+          ? lastMessage
+          : "$lastSender: $lastMessage";
     }
     return 'Faites le premier pas ;)'.hardcoded;
   }
 
   String _getLastMessageDate() {
     if (_conversation.lastMessageTimeSent == null) return "";
-    return DateFormat.Hm().format(_conversation.lastMessageTimeSent!);
+    return DateFormat.Hm().format(_conversation.lastMessageTimeSent);
   }
 
   Widget _getConversationPicture() {

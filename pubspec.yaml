@@ -53,6 +53,8 @@ dependencies:
   firebase_storage: ^11.0.16
   file_picker: ^5.2.11
   mime: ^1.0.4
+  cached_network_image: ^3.2.3
+  easy_image_viewer: ^1.2.0
 
 dev_dependencies:
   flutter_test:

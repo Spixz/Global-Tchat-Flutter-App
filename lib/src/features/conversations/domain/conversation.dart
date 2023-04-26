@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 
 class Conversation {
   final String id;
@@ -15,6 +16,7 @@ class Conversation {
   final List<String>? banned;
   final String? lastMessage;
   final String? lastMessageSender;
+  final MessageType? lastMessageType;
   final DateTime lastMessageTimeSent;
   final bool? lastMessageRead;
 
@@ -29,6 +31,7 @@ class Conversation {
     this.banned,
     this.lastMessage,
     this.lastMessageSender,
+    this.lastMessageType,
     required this.lastMessageTimeSent,
     this.lastMessageRead,
   });
@@ -44,6 +47,7 @@ class Conversation {
     List<String>? banned,
     String? lastMessage,
     String? lastMessageSender,
+    MessageType? lastMessageType,
     DateTime? lastMessageTimeSent,
     bool? lastMessageRead,
   }) {
@@ -58,6 +62,7 @@ class Conversation {
       banned: banned ?? this.banned,
       lastMessage: lastMessage ?? this.lastMessage,
       lastMessageSender: lastMessageSender ?? this.lastMessageSender,
+      lastMessageType: lastMessageType ?? this.lastMessageType,
       lastMessageTimeSent: lastMessageTimeSent ?? this.lastMessageTimeSent,
       lastMessageRead: lastMessageRead ?? this.lastMessageRead,
     );
@@ -75,6 +80,7 @@ class Conversation {
       'banned': banned,
       'lastMessage': lastMessage,
       'lastMessageSender': lastMessageSender,
+      'lastMessageType': lastMessageType.toString(),
       'lastMessageTimeSent': Timestamp.fromDate(lastMessageTimeSent),
       'lastMessageRead': lastMessageRead,
     };
@@ -102,6 +108,9 @@ class Conversation {
       lastMessageSender: map['lastMessageSender'] != null
           ? map['lastMessageSender'] as String
           : null,
+      lastMessageType: map['lastMessageType'] != null
+          ? MessageType.values.byName(map['lastMessageType'])
+          : null,
       lastMessageTimeSent:
           // (map['lastMessageTimeSent'] as Timestamp).toDate(),
           (map['lastMessageTimeSent'] as Timestamp).toDate(),
@@ -117,7 +126,7 @@ class Conversation {
 
   @override
   String toString() {
-    return 'Conversation(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $members, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
+    return 'Conversation(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $members, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageType: $lastMessageType, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
   }
 
   @override
@@ -134,6 +143,7 @@ class Conversation {
         listEquals(other.banned, banned) &&
         other.lastMessage == lastMessage &&
         other.lastMessageSender == lastMessageSender &&
+        other.lastMessageType == lastMessageType &&
         other.lastMessageTimeSent == lastMessageTimeSent &&
         other.lastMessageRead == lastMessageRead;
   }
@@ -150,6 +160,7 @@ class Conversation {
         banned.hashCode ^
         lastMessage.hashCode ^
         lastMessageSender.hashCode ^
+        lastMessageType.hashCode ^
         lastMessageTimeSent.hashCode ^
         lastMessageRead.hashCode;
   }

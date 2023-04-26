@@ -63,6 +63,7 @@ class ConversationsRepository {
     return group.id;
   }
 
+//TODO: Doit supprimer aussi les médias lié à la conversation
   Future deleteConversation(String conversationId) async {
     final conversationCollection = firestore.collection('groups');
     final messageCollection = firestore.collection('messages');
@@ -143,6 +144,7 @@ moins chère que de call la qui créer le doc à chaques fois.
     await firestore.collection('groups').doc(conversationId).update({
       'lastMessage': message.content,
       'lastMessageSender': message.senderId,
+      'lastMessageType': message.type.toString(),
       'lastMessageTimeSent': Timestamp.fromDate(message.createdAt),
     });
   }

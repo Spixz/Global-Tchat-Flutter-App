@@ -1,19 +1,24 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 
 class MessageBody extends ConsumerWidget {
   final Message message;
   final String connectedUserUid;
 
-  const MessageBody({super.key, required this.message, required this.connectedUserUid});
-  //TODO: ca serai bien me mettre un provider ici pour aligner en fonction de l'envoyeur
+  const MessageBody(
+      {super.key, required this.message, required this.connectedUserUid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final connectedUser = ref.watch(userProvider);
     var size = MediaQuery.of(context).size;
     bool isSender = message.senderId == connectedUserUid;
+    bool isOpenable = true;
 
     return Align(
         alignment: (isSender ? Alignment.centerRight : Alignment.centerLeft),
@@ -36,9 +41,36 @@ class MessageBody extends ConsumerWidget {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 3),
-                Text(
-                  message.content,
-                )
+                if (message.type == MessageType.text)
+                  Text(
+                    message.content,
+                  ),
+                if (message.type == MessageType.image)
+                  CachedNetworkImage(
+                    imageUrl: message.content,
+                    placeholder: (context, url) => const LoadingWidget(),
+                    imageBuilder:
+                        (BuildContext context, ImageProvider imageProvider) {
+                      return GestureDetector(
+                        onTap: () {
+                          showImageViewer(context, imageProvider,
+                              doubleTapZoomable: true, swipeDismissible: true);
+                        },
+                        child: Image(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        textDirection: TextDirection.rtl,
+                        children: const [
+                          Icon(Icons.error),
+                          SizedBox(width: 5),
+                          Text("Impossible de charger l'image")
+                        ]),
+                  ),
               ]),
         ));
   }

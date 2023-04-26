@@ -22,13 +22,14 @@ class ConversationWithMembers extends Conversation {
           banned: conv.banned,
           lastMessage: conv.lastMessage,
           lastMessageSender: conv.lastMessageSender,
+          lastMessageType: conv.lastMessageType,
           lastMessageTimeSent: conv.lastMessageTimeSent,
           lastMessageRead: conv.lastMessageRead,
         );
 
   @override
   String toString() {
-    return 'ConversationWithMembers(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $membersFilled, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
+    return 'ConversationWithMembers(id: $id, name: $name, description: $description, imageUrl: $imageUrl, ownerId: $ownerId, members: $membersFilled, admins: $admins, banned: $banned, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, lastMessageType: $lastMessageType, lastMessageTimeSent: $lastMessageTimeSent, lastMessageRead: $lastMessageRead)';
   }
 
   Map<String, dynamic> toMapSecond() {
