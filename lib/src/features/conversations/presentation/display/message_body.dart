@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:intl/intl.dart' deferred as intl;
 
 class MessageBody extends ConsumerWidget {
   final Message message;
@@ -16,9 +18,11 @@ class MessageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final connectedUser = ref.watch(userProvider);
+    intl.loadLibrary();
+
     var size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
     bool isSender = message.senderId == connectedUserUid;
-    bool isOpenable = true;
 
     return Align(
         alignment: (isSender ? Alignment.centerRight : Alignment.centerLeft),
@@ -40,11 +44,10 @@ class MessageBody extends ConsumerWidget {
                 Text(message.senderUsername,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 3),
+                const SizedBox(height: 10),
                 if (message.type == MessageType.text)
-                  Text(
-                    message.content,
-                  ),
+                  Text(message.content,
+                      style: const TextStyle(color: textColor)),
                 if (message.type == MessageType.image)
                   CachedNetworkImage(
                     imageUrl: message.content,
@@ -71,6 +74,19 @@ class MessageBody extends ConsumerWidget {
                           Text("Impossible de charger l'image")
                         ]),
                   ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(intl.DateFormat('HH:mm').format(message.createdAt),
+                        style: const TextStyle(
+                            color:
+                                disabledColor)), //TODO: (color ne fonctionne pas) utiliser thème a la place
+                    Icon(Icons.check,
+                        size: 16,
+                        color: (message.isSeen) ? enabledColor : disabledColor),
+                  ],
+                )
               ]),
         ));
   }

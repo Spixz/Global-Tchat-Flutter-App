@@ -5,6 +5,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/data/conversations_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_state.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/generate_random_string.dart';
 
 class DisplayConversationController
     extends StateNotifier<DisplayConversationState> {
@@ -71,7 +72,7 @@ class DisplayConversationController
 //message collction est vide, il faut fixer ça.
   Future<void> sendMessage(MessageType type, String content) async {
     final newMsg = Message(
-        id: "",
+        id: generateRandomString(30),
         content: content,
         senderId: state.currentUserUid,
         createdAt: DateTime.now(),
@@ -92,6 +93,15 @@ class DisplayConversationController
           await conversationsRepository.uploadFile(fileDest, uint8list);
       await sendMessage(MessageType.image, link);
     });
+    state = state.copyWith(value: value);
+  }
+
+  void changeMessageStatus(
+      String conversationId, String messageId, bool status) async {
+    state = state.copyWith(value: const AsyncLoading());
+    final value = await AsyncValue.guard(() async =>
+        await conversationsRepository.changeMessageStatus(
+            conversationId, messageId, status));
     state = state.copyWith(value: value);
   }
 

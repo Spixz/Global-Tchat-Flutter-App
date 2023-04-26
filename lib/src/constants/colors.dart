@@ -12,3 +12,5 @@ const dividerColor = Color.fromRGBO(37, 45, 50, 1);
 const chatBarMessage = Color.fromRGBO(30, 36, 40, 1);
 const mobileChatBoxColor = Color.fromRGBO(31, 44, 52, 1);
 const blackColor = Color.fromRGBO(0, 0, 0, 1);
+const enabledColor = Color.fromRGBO(87, 227, 0, 1);
+const disabledColor = Color.fromRGBO(255, 255, 255, 0.5);

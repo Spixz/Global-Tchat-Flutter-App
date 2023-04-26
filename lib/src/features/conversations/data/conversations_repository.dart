@@ -149,6 +149,25 @@ moins chère que de call la qui créer le doc à chaques fois.
     });
   }
 
+  Future<void> changeMessageStatus(
+      String conversationId, String messageId, bool status) async {
+    final document = firestore.collection('messages').doc(conversationId);
+    final snapshot = await document.get();
+    List<dynamic> dynamicList = snapshot.data()?['messages'];
+    List<Message> messages =
+        dynamicList.map((e) => Message.fromMap(e)).toList();
+
+    final int messageIndex =
+        messages.indexWhere((message) => message.id == messageId);
+
+    if (messageIndex != -1) {
+      // print("Message non lu trouvé $messageId");
+      messages[messageIndex] = messages[messageIndex].copyWith(isSeen: true);
+      await document
+          .update({'messages': messages.toList().map((e) => e.toMap())});
+    }
+  }
+
   Future<String> uploadFile(String destpath, Uint8List? uint8list) async {
     final fileRef = storage.ref(destpath);
     if (uint8list != null) {

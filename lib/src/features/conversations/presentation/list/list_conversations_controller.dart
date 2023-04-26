@@ -30,7 +30,6 @@ class ListConversationsController
         state = state.copyWith(value: const AsyncLoading());
         state = state.copyWith(
             conversationsWithUsersObjects: event, value: AsyncData(event));
-        print(event);
       },
       onError: (err, st) {
         state = state.copyWith(value: AsyncError(err, st));

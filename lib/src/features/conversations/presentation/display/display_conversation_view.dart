@@ -29,6 +29,11 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
           displayConversationControllerProvider(widget.conversationId).notifier)
       .sendFile(fileDest, uint8list);
 
+  void changeMessageStatusToSeen(String messageId) => ref
+      .read(
+          displayConversationControllerProvider(widget.conversationId).notifier)
+      .changeMessageStatus(widget.conversationId, messageId, true);
+
   @override
   Widget build(BuildContext context) {
     ref.listen(displayConversationControllerProvider(widget.conversationId),
@@ -46,7 +51,8 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
           MessageList(
               messages: state.messagesFromConversation?.messages ??
                   List<Message>.from([]),
-              connectedUserUid: state.currentUserUid),
+              connectedUserUid: state.currentUserUid,
+              changeMessageStatusToSeen: changeMessageStatusToSeen),
           PromptUserMessage(submitMessage: submitMessage, sendFile: sendFile),
         ],
       ),
