@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_app_bar/account_app_bar.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_controller.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
@@ -19,6 +23,29 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
   String get email => _emailController.text;
   String get username => _usernameController.text;
 
+  void selectAndSendFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'gif', 'svg', 'bmp'],
+    );
+
+    if (result != null) {
+      Uint8List? fileBytes = result.files.first.bytes;
+      String filename = result.files.first.name;
+      ref
+          .read(accountControllerProvider.notifier)
+          .sendFile('avatar/$filename', fileBytes!);
+    }
+  }
+
+  void changeUserInformations(Map<String, dynamic> data) {
+    ref.watch(accountControllerProvider.notifier).changeUserInformations(data);
+  }
+
+  void signOut() {
+    ref.watch(accountControllerProvider.notifier).signOut();
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -30,54 +57,102 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
   Widget build(BuildContext context) {
     ref.listen(accountControllerProvider, (previous, state) {
       state.value.showAlertDialogOnError(context);
+      state.value.showSnackBarOnSuccess(context);
     });
 
-    var stream = ref.watch(authRepositoryUserStreamProvider);
-    stream.whenData((user) => {
-          _emailController.text = user?.email ?? '',
-          _usernameController.text = user?.username ?? '',
-        });
+    var size = MediaQuery.of(context).size;
+    final state = ref.watch(accountControllerProvider);
+
+    _emailController.text = state.user?.email ?? '';
+    _usernameController.text = state.user?.username ?? '';
 
     return Scaffold(
         appBar: const AccountAppBar(),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.person),
-                  hintText: 'Username',
-                  labelText: 'Name',
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: size.width * 0.9),
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 30),
+                  child: Stack(children: [
+                    CachedNetworkImage(
+                        imageUrl: state.user?.profilePic ?? "",
+                        placeholder: (context, url) => const LoadingWidget(),
+                        imageBuilder: (BuildContext context,
+                            ImageProvider imageProvider) {
+                          return GestureDetector(
+                            onTap: () {
+                              showImageViewer(context, imageProvider,
+                                  doubleTapZoomable: true,
+                                  swipeDismissible: true);
+                            },
+                            child: CircleAvatar(
+                              backgroundImage: imageProvider,
+                              radius: 100,
+                              // fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                              radius: 100,
+                              child: Icon(
+                                Icons.person,
+                                size: 100.0,
+                                color: Colors.grey,
+                              ),
+                            )),
+                    Positioned(
+                        bottom: 6,
+                        right: 6,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.green,
+                          radius: 25,
+                          child: IconButton(
+                            color: Colors.white,
+                            splashRadius: 20,
+                            icon: const Icon(Icons.camera_alt),
+                            onPressed: () {
+                              selectAndSendFile();
+                            },
+                          ),
+                        )),
+                  ]),
                 ),
-              ),
-              TextFormField(
-                controller: _emailController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.person),
-                  hintText: 'Email',
-                  labelText: 'Email',
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: 'Username',
+                    labelText: 'Name',
+                  ),
                 ),
-              ),
-              TextButton(
-                  onPressed: () async {
-                    await ref
-                        .read(authRepositoryProvider)
-                        .changeUserInformations({
-                      'username': username,
-                    });
-                  },
-                  child: const Text("Save")),
-              TextButton(
-                  onPressed: () async {
-                    await ref
-                        .read(accountControllerProvider.notifier)
-                        .signOut();
-                  },
-                  child: const Text("Logout")),
-            ],
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _emailController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: 'Email',
+                    labelText: 'Email',
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {
+                      changeUserInformations({
+                        'username': username,
+                      });
+                    },
+                    child: const Text("Save")),
+                TextButton(
+                    onPressed: () {
+                      signOut();
+                    },
+                    child: const Text("Logout")),
+              ],
+            ),
           ),
         ));
   }

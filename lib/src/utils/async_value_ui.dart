@@ -10,4 +10,11 @@ extension AsyncValueUi on AsyncValue {
           context: context, title: "Erreur".hardcoded, exception: error);
     }
   }
+
+  void showSnackBarOnSuccess(BuildContext context) {
+    if (!isLoading && hasValue && value != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(value)));
+    }
+  }
 }

@@ -11,9 +11,9 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/l
  - interact with repositories in the data layer
 */
 
-class AuthController extends StateNotifier<AccountState> {
+class AuthController extends StateNotifier<LoginRegisterState> {
   final AuthRepository auth;
-  AuthController({required this.auth}) : super(AccountState());
+  AuthController({required this.auth}) : super(LoginRegisterState());
 
   Future<String?> signInWithUserWithEmailAndPassword(
       String email, String password) async {
@@ -56,7 +56,7 @@ class AuthController extends StateNotifier<AccountState> {
 }
 
 final authControllerProvider =
-    StateNotifierProvider<AuthController, AccountState>((ref) {
+    StateNotifierProvider<AuthController, LoginRegisterState>((ref) {
   final AuthRepository auth = ref.watch(authRepositoryProvider);
   return AuthController(auth: auth);
 });

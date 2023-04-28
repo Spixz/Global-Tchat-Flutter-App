@@ -2,14 +2,14 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AccountState {
+class LoginRegisterState {
   final AsyncValue value;
-  AccountState({this.value = const AsyncValue.data(null)});
+  LoginRegisterState({this.value = const AsyncValue.data(null)});
 
-  AccountState copyWith({
+  LoginRegisterState copyWith({
     AsyncValue? value,
   }) {
-    return AccountState(
+    return LoginRegisterState(
       value: value ?? this.value,
     );
   }
@@ -18,7 +18,7 @@ class AccountState {
   String toString() => 'LoginRegisterState(value: $value)';
 
   @override
-  bool operator ==(covariant AccountState other) {
+  bool operator ==(covariant LoginRegisterState other) {
     if (identical(this, other)) return true;
 
     return other.value == value;

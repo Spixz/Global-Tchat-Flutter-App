@@ -10,13 +10,38 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 class AuthRepository {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
+  StreamSubscription? userInfosModificationsListener;
   AppUser? _actualUser;
 
-  AuthRepository({required this.auth, required this.firestore}) {
+  /// Modifie le _actualUser si un utilisateur se connecte ou déconnecte (from firebase stream)
+  /// + Si une modification a lieu dans les données de l'user connecté, alors
+  /// un nouveau _actualUser avec les données mises à jour est émis.
+  AuthRepository(
+      {required this.auth,
+      required this.firestore,
+      this.userInfosModificationsListener}) {
     authStateChange().listen((User? user) async {
       debugPrint("Firebase auth modification");
       _actualUser = (user != null) ? await retrieveUserFromUid(user.uid) : null;
       userStreamController.add(_actualUser);
+      if (user != null) {
+        userInfosModificationsListener = firestore
+            .collection('users')
+            .doc(user.uid)
+            .snapshots()
+            .listen((event) async {
+          var newUser = event.data();
+          newUser!['uid'] = user.uid;
+          newUser['groupId'] =
+              newUser['groupId'].length == 0 ? <String>[] : newUser['groupId'];
+          _actualUser = AppUser.fromMap(newUser);
+          userStreamController.add(_actualUser);
+        });
+      } else {
+        if (userInfosModificationsListener != null) {
+          userInfosModificationsListener!.cancel();
+        }
+      }
     });
   }
 

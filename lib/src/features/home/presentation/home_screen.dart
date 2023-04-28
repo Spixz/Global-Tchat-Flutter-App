@@ -18,8 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const Center(child: Text("Tu es connecté")),
           TextButton(
-              onPressed: () =>
-                  GoRouter.of(context).pushNamed(AppRoute.account.name),
+              onPressed: () => GoRouter.of(context)
+                  .pushReplacementNamed(AppRoute.account.name),
+                  // .pushReplacementNamed(AppRoute.account.name),
               child: const Text("=> Account"))
         ],
       ),

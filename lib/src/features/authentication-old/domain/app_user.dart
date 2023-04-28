@@ -5,20 +5,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 /// Simple class representing the user UID and email.
-class AppUser {
+class AppUserOld {
   final String uid;
   final String email;
-  AppUser({
+  AppUserOld({
     required this.uid,
     required this.email,
   });
 
-
-  AppUser copyWith({
+  AppUserOld copyWith({
     String? uid,
     String? email,
   }) {
-    return AppUser(
+    return AppUserOld(
       uid: uid ?? this.uid,
       email: email ?? this.email,
     );
@@ -31,8 +30,8 @@ class AppUser {
     };
   }
 
-  factory AppUser.fromMap(Map<String, dynamic> map) {
-    return AppUser(
+  factory AppUserOld.fromMap(Map<String, dynamic> map) {
+    return AppUserOld(
       uid: map['uid'] as String,
       email: map['email'] as String,
     );
@@ -40,18 +39,17 @@ class AppUser {
 
   String toJson() => json.encode(toMap());
 
-  factory AppUser.fromJson(String source) => AppUser.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AppUserOld.fromJson(String source) =>
+      AppUserOld.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'AppUser(uid: $uid, email: $email)';
 
   @override
-  bool operator ==(covariant AppUser other) {
+  bool operator ==(covariant AppUserOld other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.uid == uid &&
-      other.email == email;
+
+    return other.uid == uid && other.email == email;
   }
 
   @override
