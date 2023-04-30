@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
           TextButton(
               onPressed: () => GoRouter.of(context)
                   .pushReplacementNamed(AppRoute.account.name),
-                  // .pushReplacementNamed(AppRoute.account.name),
+              // GoRouter.of(context).go(AppRoute.account.name),
               child: const Text("=> Account"))
         ],
       ),

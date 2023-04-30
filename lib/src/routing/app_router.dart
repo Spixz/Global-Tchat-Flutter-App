@@ -20,12 +20,13 @@ enum AppRoute {
   displayConversation,
 }
 
-final goRouterProvider = Provider<GoRouter>((ref) {
-  // final userStreamProvider = ref.watch(authRepositoryUserStreamProvider);
-//a delete
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/listConversations',
+    navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: false,
     redirect: (context, state) async {
       //TODO: La mettre ailleur
@@ -60,39 +61,122 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: GoRouterRefreshStream(
         ref.read(authRepositoryProvider).authStateChange()),
     routes: [
-      GoRoute(
-          path: '/',
-          name: AppRoute.home.name,
-          builder: (context, state) => const HomeScreen(),
+      ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (context, state, child) {
+            return ScaffoldWithBottomNavBar(child: child);
+          },
           routes: [
             GoRoute(
-              path: 'login',
-              name: AppRoute.login.name,
-              builder: (context, state) => const LoginRegisterScreen(),
-            ),
-            GoRoute(
-                path: 'account',
-                name: AppRoute.account.name,
-                builder: (context, state) => const AccountScreen()),
-            GoRoute(
-                path: 'createConversation',
-                name: AppRoute.createConversation.name,
-                builder: (context, state) => const CreateNewConversation()),
-            GoRoute(
-                path: 'listConversations',
-                name: AppRoute.listConversations.name,
-                builder: (context, state) => const ListConversations()),
-            GoRoute(
-                path: 'displayConversation/:id',
-                name: AppRoute.displayConversation.name,
-                builder: (context, state) {
-                  final conversationId = state.params['id'];
-                  print(conversationId);
-                  //ConversationWithMembers conversation = state.params['conversationBinded']; //from json
-                  return DisplayConversation(conversationId: conversationId);
-                }),
+                path: '/',
+                name: AppRoute.home.name,
+                builder: (context, state) => const HomeScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'login',
+                    name: AppRoute.login.name,
+                    builder: (context, state) => const LoginRegisterScreen(),
+                  ),
+                  GoRoute(
+                      path: 'account',
+                      name: AppRoute.account.name,
+                      builder: (context, state) => const AccountScreen()),
+                  GoRoute(
+                      path: 'createConversation',
+                      name: AppRoute.createConversation.name,
+                      builder: (context, state) =>
+                          const CreateNewConversation()),
+                  GoRoute(
+                      path: 'listConversations',
+                      name: AppRoute.listConversations.name,
+                      builder: (context, state) => const ListConversations()),
+                  GoRoute(
+                      path: 'displayConversation/:id',
+                      name: AppRoute.displayConversation.name,
+                      builder: (context, state) {
+                        final conversationId = state.params['id'];
+                        print(conversationId);
+                        //ConversationWithMembers conversation = state.params['conversationBinded']; //from json
+                        return DisplayConversation(
+                            conversationId: conversationId);
+                      }),
+                ])
           ])
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
 });
+
+const tabs = [
+  ScaffoldWithNavBarTabItem(
+    initialLocation: '/listConversations',
+    icon: Icon(Icons.home),
+    label: 'Conversations',
+  ),
+  ScaffoldWithNavBarTabItem(
+    initialLocation: '/account',
+    icon: Icon(Icons.settings),
+    label: 'Profile',
+  ),
+];
+
+class ScaffoldWithNavBarTabItem extends BottomNavigationBarItem {
+  const ScaffoldWithNavBarTabItem(
+      {required this.initialLocation, required Widget icon, String? label})
+      : super(icon: icon, label: label);
+
+  /// The initial location/path
+  final String initialLocation;
+}
+
+class ScaffoldWithBottomNavBar extends StatefulWidget {
+  const ScaffoldWithBottomNavBar({Key? key, required this.child})
+      : super(key: key);
+  final Widget child;
+
+  @override
+  State<ScaffoldWithBottomNavBar> createState() =>
+      _ScaffoldWithBottomNavBarState();
+}
+
+class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
+  // getter that computes the current index from the current location,
+  // using the helper method below
+  int get _currentIndex => _locationToTabIndex(GoRouter.of(context).location);
+
+  int _locationToTabIndex(String location) {
+    final index =
+        tabs.indexWhere((t) => location.startsWith(t.initialLocation));
+    // if index not found (-1), return 0
+    return index < 0 ? 0 : index;
+  }
+
+  // callback used to navigate to the desired tab
+  void _onItemTapped(BuildContext context, int tabIndex) {
+    if (tabIndex != _currentIndex) {
+      // go to the initial location of the selected tab (by index)
+      context.go(tabs[tabIndex].initialLocation);
+      // GoRouter.of(context).pushReplacementNamed(tabs[tabIndex].initialLocation);
+      // GoRouter.of(context).go()
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Current index: $_currentIndex");
+    return Scaffold(
+      body: widget.child,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        items: tabs,
+        onTap: (index) => _onItemTapped(context, index),
+        selectedIconTheme:
+            const IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedItemColor: Colors.amberAccent,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+      ),
+    );
+  }
+}
