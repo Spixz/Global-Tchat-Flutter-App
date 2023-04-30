@@ -14,6 +14,12 @@ class ListConversationsController
     _listenAuthStream();
   }
 
+  @override
+  void dispose() {
+    print("Le controller ListConversationsController à été supprimé");
+    super.dispose();
+  }
+
   void _listenAuthStream() {
     authRepository.userStream().listen((event) async {
       if (authRepository.currentUser != null) {

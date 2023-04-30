@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/app_bar_menu.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/empty_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/conversation_tile_widget.dart';
@@ -34,7 +35,7 @@ class _ListConversationsState extends ConsumerState<ListConversations> {
     final state = ref.watch(listConversationsControllerProvider);
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Conversations')),
+        appBar: const AppBarMenu(title: 'Conversations'),
         body: state.value.when(
             data: (data) => (state.conversationsWithUsersObjects.isNotEmpty)
                 ? ListView.builder(

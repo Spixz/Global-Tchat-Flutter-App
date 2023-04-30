@@ -146,11 +146,6 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
                       });
                     },
                     child: const Text("Save")),
-                TextButton(
-                    onPressed: () {
-                      signOut();
-                    },
-                    child: const Text("Logout")),
               ],
             ),
           ),
