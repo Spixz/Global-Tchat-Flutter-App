@@ -30,7 +30,7 @@ class MessageBody extends ConsumerWidget {
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: (isSender) ? Colors.red : Colors.amber,
+              color: (isSender) ? myMessageColor : othersMessageColor,
               borderRadius: BorderRadius.circular(10)),
           constraints: BoxConstraints(
             maxWidth: size.width * 0.7,
@@ -81,10 +81,11 @@ class MessageBody extends ConsumerWidget {
                     Text(intl.DateFormat('HH:mm').format(message.createdAt),
                         style: const TextStyle(
                             color:
-                                disabledColor)), //TODO: (color ne fonctionne pas) utiliser thème a la place
+                                messageTimeColor)), //TODO: (color ne fonctionne pas) utiliser thème a la place
                     Icon(Icons.check,
                         size: 16,
-                        color: (message.isSeen) ? enabledColor : disabledColor),
+                        color:
+                            (message.isSeen) ? enabledColor : messageTimeColor),
                   ],
                 )
               ]),

@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/domain/app_user.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/data/auth_repository.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/data/conversations_repository.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/conversationWithMembers.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_state.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/generate_random_string.dart';
@@ -129,6 +131,22 @@ class DisplayConversationController
           messagesFromConversation:
               state.messagesFromConversation!.copyWith(messages: msg));
     }
+  }
+
+//Retourne le nom de la conversation ou le pseudo du correspondant
+  String getConversationTitle() {
+    ConversationWithMembers? conversation = state.conversationInformations;
+    if (conversation == null) return '';
+    List<AppUser> membersWithoutActualUser = conversation.membersFilled
+        .where((element) => element.uid != state.currentUserUid)
+        .toList();
+    if (conversation.name != null) {
+      return conversation.name!;
+    }
+    if (conversation.membersFilled.length == 2) {
+      return membersWithoutActualUser.first.username;
+    }
+    return 'Group';
   }
 }
 

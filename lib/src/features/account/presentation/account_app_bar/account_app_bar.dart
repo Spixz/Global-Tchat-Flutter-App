@@ -1,3 +1,4 @@
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class AccountAppBar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text("Account".hardcoded),
+      backgroundColor: appBarColor,
       actions: const [
         // if (GoRouter.of(context).location == AppRoute.home.name) ...[
         //   IconButton(

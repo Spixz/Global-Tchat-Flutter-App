@@ -31,6 +31,9 @@ class AuthRepository {
             .snapshots()
             .listen((event) async {
           var newUser = event.data();
+          // if (newUser == null) {
+          //   return;
+          // }
           newUser!['uid'] = user.uid;
           newUser['groupId'] =
               newUser['groupId'].length == 0 ? <String>[] : newUser['groupId'];

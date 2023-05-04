@@ -94,7 +94,7 @@ class CreateConversationController
 }
 
 final CreateConversationControllerProvider =
-    StateNotifierProvider<CreateConversationController, ListConversationsState>(
+    StateNotifierProvider.autoDispose<CreateConversationController, ListConversationsState>(
         (ref) {
   final ConversationsRepository groupTchatRepo =
       ref.watch(conversationsRepositoryProvider);

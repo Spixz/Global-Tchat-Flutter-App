@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/app_bar_menu.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/domain/message.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_controller.dart';
@@ -34,6 +35,11 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
           displayConversationControllerProvider(widget.conversationId).notifier)
       .changeMessageStatus(widget.conversationId, messageId, true);
 
+  String getConversationTitle() => ref
+      .read(
+          displayConversationControllerProvider(widget.conversationId).notifier)
+      .getConversationTitle();
+
   @override
   Widget build(BuildContext context) {
     ref.listen(displayConversationControllerProvider(widget.conversationId),
@@ -45,16 +51,22 @@ class _DisplayConversationsState extends ConsumerState<DisplayConversation> {
         ref.watch(displayConversationControllerProvider(widget.conversationId));
 
     return Scaffold(
-      // appBar: const MessagerieAppbar(),
-      body: Column(
-        children: [
-          MessageList(
-              messages: state.messagesFromConversation?.messages ??
-                  List<Message>.from([]),
-              connectedUserUid: state.currentUserUid,
-              changeMessageStatusToSeen: changeMessageStatusToSeen),
-          PromptUserMessage(submitMessage: submitMessage, sendFile: sendFile),
-        ],
+      appBar: AppBarMenu(title: getConversationTitle(), menuEnabled: false),
+      body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/chat_background.jpg'),
+                fit: BoxFit.cover)),
+        child: Column(
+          children: [
+            MessageList(
+                messages: state.messagesFromConversation?.messages ??
+                    List<Message>.from([]),
+                connectedUserUid: state.currentUserUid,
+                changeMessageStatusToSeen: changeMessageStatusToSeen),
+            PromptUserMessage(submitMessage: submitMessage, sendFile: sendFile),
+          ],
+        ),
       ),
     );
   }

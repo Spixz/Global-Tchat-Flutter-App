@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/app_bar_menu.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/empty_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/conversation_tile_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/long_press_popup_widget.dart';
@@ -35,7 +36,7 @@ class _ListConversationsState extends ConsumerState<ListConversations> {
     final state = ref.watch(listConversationsControllerProvider);
 
     return Scaffold(
-        appBar: const AppBarMenu(title: 'Conversations'),
+        appBar: AppBarMenu(title: 'GlobalTchat'.hardcoded),
         body: state.value.when(
             data: (data) => (state.conversationsWithUsersObjects.isNotEmpty)
                 ? ListView.builder(
@@ -72,7 +73,7 @@ class _ListConversationsState extends ConsumerState<ListConversations> {
         floatingActionButton: FloatingActionButton(
             onPressed: () => GoRouter.of(context)
                 .pushNamed(AppRoute.createConversation.name),
-            backgroundColor: Colors.green,
+            backgroundColor: floatingButtonColor,
             child: const Icon(Icons.add)));
   }
 }

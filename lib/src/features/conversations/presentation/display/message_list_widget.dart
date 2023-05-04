@@ -19,8 +19,8 @@ class MessageList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var size = MediaQuery.of(context).size;
 
-    return SizedBox(
-        height: size.height * 0.90,
+    return Expanded(
+        // height: size.height * 0.90,
         child: ListView.builder(
           reverse: true,
           itemCount: messages.length,

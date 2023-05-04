@@ -4,7 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/loading_widget.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/primary_button.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_app_bar/account_app_bar.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
@@ -76,50 +77,49 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 30),
-                  child: Stack(children: [
-                    CachedNetworkImage(
-                        imageUrl: state.user?.profilePic ?? "",
-                        placeholder: (context, url) => const LoadingWidget(),
-                        imageBuilder: (BuildContext context,
-                            ImageProvider imageProvider) {
-                          return GestureDetector(
-                            onTap: () {
-                              showImageViewer(context, imageProvider,
-                                  doubleTapZoomable: true,
-                                  swipeDismissible: true);
-                            },
-                            child: CircleAvatar(
+                  child: CachedNetworkImage(
+                      imageUrl: state.user?.profilePic ?? "",
+                      // placeholder: (context, url) => const LoadingWidget(),
+                      imageBuilder:
+                          (BuildContext context, ImageProvider imageProvider) {
+                        return GestureDetector(
+                          onTap: () {
+                            showImageViewer(context, imageProvider,
+                                doubleTapZoomable: true,
+                                swipeDismissible: true);
+                          },
+                          child: Stack(children: [
+                            CircleAvatar(
                               backgroundImage: imageProvider,
                               radius: 100,
                               // fit: BoxFit.cover,
                             ),
-                          );
-                        },
-                        errorWidget: (context, url, error) =>
-                            const CircleAvatar(
-                              radius: 100,
-                              child: Icon(
-                                Icons.person,
-                                size: 100.0,
-                                color: Colors.grey,
-                              ),
-                            )),
-                    Positioned(
-                        bottom: 6,
-                        right: 6,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.green,
-                          radius: 25,
-                          child: IconButton(
-                            color: Colors.white,
-                            splashRadius: 20,
-                            icon: const Icon(Icons.camera_alt),
-                            onPressed: () {
-                              selectAndSendFile();
-                            },
-                          ),
-                        )),
-                  ]),
+                            Positioned(
+                                bottom: 6,
+                                right: 6,
+                                child: CircleAvatar(
+                                  backgroundColor: buttonColor,
+                                  radius: 25,
+                                  child: IconButton(
+                                    color: Colors.white,
+                                    splashRadius: 20,
+                                    icon: const Icon(Icons.camera_alt),
+                                    onPressed: () {
+                                      selectAndSendFile();
+                                    },
+                                  ),
+                                )),
+                          ]),
+                        );
+                      },
+                      errorWidget: (context, url, error) => const CircleAvatar(
+                            radius: 100,
+                            child: Icon(
+                              Icons.person,
+                              size: 100.0,
+                              color: Colors.grey,
+                            ),
+                          )),
                 ),
                 TextFormField(
                   controller: _usernameController,
@@ -139,13 +139,14 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
                     labelText: 'Email',
                   ),
                 ),
-                TextButton(
-                    onPressed: () {
-                      changeUserInformations({
-                        'username': username,
-                      });
-                    },
-                    child: const Text("Save")),
+                const SizedBox(height: 40),
+                PrimaryButton(
+                  text: "Save",
+                  isLoading: false,
+                  onPressed: () => changeUserInformations({
+                    'username': username,
+                  }),
+                ),
               ],
             ),
           ),

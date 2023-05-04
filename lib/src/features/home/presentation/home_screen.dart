@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/app_bar_menu.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/app_router.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     print("In Home Sceen");
     return Scaffold(
+      appBar: const AppBarMenu(title: "Home"),
       body: Column(
         children: [
           const Center(child: Text("Tu es connecté")),

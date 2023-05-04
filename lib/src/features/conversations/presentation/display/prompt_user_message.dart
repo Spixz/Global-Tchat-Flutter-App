@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:file_picker/file_picker.dart';
 
 class PromptUserMessage extends ConsumerStatefulWidget {
@@ -53,14 +52,9 @@ class _PromptUserMessageState extends ConsumerState<PromptUserMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
-      height: MediaQuery.of(context).size.height * 0.07,
+    return Container(
+      constraints: const BoxConstraints(minHeight: 50, maxHeight: 60),
       padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: dividerColor)),
-        color: chatBarMessage,
-      ),
       child: Row(
         children: [
           Expanded(
@@ -69,31 +63,37 @@ class _PromptUserMessageState extends ConsumerState<PromptUserMessage> {
               child: TextField(
                   controller: _usernameController,
                   focusNode: promptFocusNode,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       // prefixIcon: Icon(Icons.emoji_emotions_outlined,
                       //     color: Colors.grey),
-                      suffixIcon: Icon(Icons.attach_file, color: Colors.grey),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            selectAndSendFile();
+                          },
+                          icon: const Icon(Icons.camera_alt,
+                              color: Colors
+                                  .grey)), //Icon(Icons.attach_file, color: Colors.grey),
                       hintText: "Message",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(20),
                           ),
                           borderSide:
                               BorderSide(width: 0, style: BorderStyle.none)),
-                      contentPadding: EdgeInsets.only(left: 20),
-                      fillColor: searchBarColor,
+                      contentPadding: const EdgeInsets.only(left: 20),
+                      fillColor: Colors.white,
                       filled: true),
                   onSubmitted: (text) => submitMessage(text)),
             ),
           ),
-          IconButton(
-              onPressed: () {
-                selectAndSendFile();
-              },
-              icon: const Icon(Icons.camera_alt, color: Colors.grey)),
+          // IconButton(
+          //     onPressed: () {
+          //       selectAndSendFile();
+          //     },
+          //     icon: const Icon(Icons.camera_alt, color: Colors.grey)),
         ],
       ),
-    ));
+    );
   }
 }

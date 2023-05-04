@@ -6,6 +6,7 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/display/display_conversation_view.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/list/list_conversations_view.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/home/presentation/home_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/go_router_refresh_stream.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/not_found_screen.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/routing/redirections.dart';
@@ -46,10 +47,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 path: 'createConversation',
                 name: AppRoute.createConversation.name,
                 builder: (context, state) => const CreateNewConversation()),
-            // GoRoute(
-            //     path: 'listConversations',
-            //     name: AppRoute.listConversations.name,
-            //     builder: (context, state) => const ListConversations()),
+            GoRoute(
+                path: 'home',
+                name: AppRoute.home.name,
+                builder: (context, state) => const HomeScreen()),
             GoRoute(
                 path: 'displayConversation/:id',
                 name: AppRoute.displayConversation.name,

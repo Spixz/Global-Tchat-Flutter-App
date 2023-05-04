@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/presentation/login_register_app_bar/login_register_app_bar.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/authentication/presentation/login_register_controller.dart';
 
 /// Shows the product page for a given product ID.
@@ -44,26 +44,30 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
     BuildContext context,
   ) {
     return Scaffold(
-        appBar: const LoginRegisterAppBar(),
+        // appBar: const LoginRegisterAppBar(),
         body: FlutterLogin(
-          title: 'ECORP',
-          //logo: AssetImage('assets/images/ecorp-lightblue.png'),
-          onLogin: _authUser,
-          onSignup: _signupUser,
-          onSubmitAnimationCompleted: () {},
-          onRecoverPassword: _recoverPassword,
-          // loginProviders: <LoginProvider>[
-          //   LoginProvider(
-          //     icon: Icons.person_off,
-          //     label: "Se connecter en tant qu'invité",
-          //     callback: () async {
-          //       debugPrint('start google sign in');
-          //       await Future.delayed(loginTime);
-          //       debugPrint('stop google sign in');
-          //       return null;
-          //     },
-          //   ),
-          // ]
-        ));
+      title: 'GlobalTchat',
+      // logo: const AssetImage('assets/images/ecorp-lightblue.png'),
+      onLogin: _authUser,
+      onSignup: _signupUser,
+      onSubmitAnimationCompleted: () {},
+      onRecoverPassword: _recoverPassword,
+      theme: LoginTheme(
+        pageColorLight: tabColor,
+        primaryColor: loginButtonColor,
+      ),
+      // loginProviders: <LoginProvider>[
+      //   LoginProvider(
+      //     icon: Icons.person_off,
+      //     label: "Se connecter en tant qu'invité",
+      //     callback: () async {
+      //       debugPrint('start google sign in');
+      //       await Future.delayed(loginTime);
+      //       debugPrint('stop google sign in');
+      //       return null;
+      //     },
+      //   ),
+      // ]
+    ));
   }
 }

@@ -18,8 +18,16 @@ class ConversationsRepository {
   final AuthRepository auth;
   final FirebaseStorage storage;
 
+  // StreamController<List<ConversationWithMembers>> conversationStreamController =
+  //     StreamController<List<ConversationWithMembers>>.broadcast();
+  // Stream<List<ConversationWithMembers>>
+  //     getUserConversationsInformationsInRealtime() =>
+  //         conversationStreamController.stream;
+
   ConversationsRepository(
-      {required this.auth, required this.firestore, required this.storage});
+      {required this.auth, required this.firestore, required this.storage}) {
+    // initConversationStreamController();
+  }
 
   ///Transforme la liste des utilisateurs récupérer de la base de données
   ///en une liste d'AppUser
@@ -88,11 +96,17 @@ class ConversationsRepository {
 //new message a été ajouté.
   Stream<List<ConversationWithMembers>>
       getUserConversationsInformationsInRealtime() {
+    print("Init du stream getUserConversationsInformationsInRealtime");
+    // print(auth.currentUser);
+    if (auth.currentUser == null) {
+      return const Stream.empty();
+    }
     return firestore
         .collection('groups')
         .where('members', arrayContains: auth.currentUser!.uid)
         .snapshots()
         .asyncMap((event) async {
+      print("Emission convresations");
       List<ConversationWithMembers> newConversations = [];
       for (var document in event.docs) {
         var conversation = document.data();
@@ -104,6 +118,53 @@ class ConversationsRepository {
       return newConversations;
     });
   }
+
+  Stream<List<ConversationWithMembers>>
+      getUserConversationsInformationsInRealtime2(AppUser? user) {
+    print("Init du stream getUserConversationsInformationsInRealtime2");
+    print(user);
+    if (user == null) {
+      return const Stream.empty();
+    }
+    print("l'init continue");
+    return firestore
+        .collection('groups')
+        .where('members', arrayContains: user.uid)
+        .snapshots()
+        .asyncMap((event) async {
+      List<ConversationWithMembers> newConversations = [];
+      for (var document in event.docs) {
+        var conversation = document.data();
+        conversation['id'] = document.reference.id;
+        Conversation conv = Conversation.fromMap(conversation);
+        List<AppUser> members = await retrieveUsersObjectFromList(conv.members);
+        newConversations.add(ConversationWithMembers(conv, members));
+      }
+      print("Conv emise:");
+      print(newConversations);
+      return newConversations;
+    });
+  }
+
+  // void initConversationStreamController() {
+  //   firestore
+  //       .collection('groups')
+  //       .where('members', arrayContains: auth.currentUser!.uid)
+  //       .snapshots()
+  //       .asyncMap((event) async {
+  //     List<ConversationWithMembers> newConversations = [];
+  //     for (var document in event.docs) {
+  //       var conversation = document.data();
+  //       conversation['id'] = document.reference.id;
+  //       Conversation conv = Conversation.fromMap(conversation);
+  //       List<AppUser> members = await retrieveUsersObjectFromList(conv.members);
+  //       newConversations.add(ConversationWithMembers(conv, members));
+  //     }
+  //     return newConversations;
+  //   }).listen((event) {
+  //     conversationStreamController.add(event);
+  //   });
+  // }
 
 //En vrai c'est bien comme ça on récupé les messages que quand ont est dans la conv (le screen)
 //Ca veut dire que les docs ne seront récup que si on est sur le screen de la conv.
@@ -192,9 +253,20 @@ final conversationsRepositoryProvider =
       storage: FirebaseStorage.instance);
 });
 
+
 final conversationWithMembersStreamProvider =
-    StreamProvider<List<ConversationWithMembers>>((ref) {
+    StreamProvider.autoDispose<List<ConversationWithMembers>>((
+  ref,
+) {
   final ConversationsRepository repository =
       ref.watch(conversationsRepositoryProvider);
   return repository.getUserConversationsInformationsInRealtime();
+});
+
+// C'est celui ci qui foncitonne même sans autoDispose car l'id est passée en para
+final conversationWithMembersStreamProvider2 =
+    StreamProvider.family<List<ConversationWithMembers>, AppUser?>((ref, user) {
+  final ConversationsRepository repository =
+      ref.watch(conversationsRepositoryProvider);
+  return repository.getUserConversationsInformationsInRealtime2(user);
 });
