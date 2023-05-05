@@ -40,6 +40,7 @@ class AppBarMenu extends ConsumerWidget with PreferredSizeWidget {
                           .read(accountControllerProvider.notifier)
                           .signOut();
                     }
+                    // GoRouter.of(context).pushReplacementNamed(value);
                     GoRouter.of(context).pushNamed(value);
                   })
             ]

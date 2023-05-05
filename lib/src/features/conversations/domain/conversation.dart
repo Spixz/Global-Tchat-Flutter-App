@@ -80,7 +80,8 @@ class Conversation {
       'banned': banned,
       'lastMessage': lastMessage,
       'lastMessageSender': lastMessageSender,
-      'lastMessageType': lastMessageType.toString(),
+      'lastMessageType':
+          (lastMessageType != null) ? lastMessageType.toString() : null,
       'lastMessageTimeSent': Timestamp.fromDate(lastMessageTimeSent),
       'lastMessageRead': lastMessageRead,
     };

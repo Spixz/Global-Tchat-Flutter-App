@@ -14,8 +14,9 @@ class ListConversationsController
   final Ref ref;
 
   late StreamSubscription<AppUser?> userStreamSubscription;
-  late ProviderSubscription<AsyncValue<List<ConversationWithMembers>>>
+  late StreamSubscription<List<ConversationWithMembers>>
       conversationStreamSubscription;
+  late ProviderSubscription<AsyncValue<List<ConversationWithMembers>>> ps2;
 
   ListConversationsController(
       {required this.authRepository,
@@ -30,7 +31,14 @@ class ListConversationsController
   void dispose() async {
     print("The ListConversationsController was deleted");
     await userStreamSubscription.cancel();
-    // conversationStreamSubscription.close();
+    await conversationStreamSubscription.cancel();
+    final a = userStreamSubscription.isPaused;
+    final c = conversationStreamSubscription.isPaused;
+    print(
+        "userStreamSubscription.cancel() => $a, conversationStreamSubscription.cancel() => $c");
+
+    // ps2.close();
+
     super.dispose();
   }
 
@@ -39,48 +47,77 @@ class ListConversationsController
       if (authRepository.currentUser != null) {
         state = state.copyWith(currentUserUid: authRepository.currentUser!.uid);
         retrieveUserConversation();
+      } else {
+        print(
+            'user == null => on call dispose from ListConversationsController');
+        dispose();
       }
     });
   }
 
   void retrieveUserConversation() {
     //! foncitonne car on écoute le stream directement depuis le provider
-    // conversationStreamSubscription =
-    //     groupRepository.getUserConversationsInformationsInRealtime().listen(
-    //   (event) {
-    //     state = state.copyWith(value: const AsyncLoading());
-    //     state = state.copyWith(
-    //         conversationsWithUsersObjects: event, value: AsyncData(event));
-    //   },
-    //   onError: (err, st) {
-    //     print("error");
-    //     print(err);
-    //     state = state.copyWith(value: AsyncError(err, st));
-    //   },
-    // );
+    conversationStreamSubscription =
+        groupRepository.getUserConversationsInformationsInRealtime().listen(
+      (event) {
+        state = state.copyWith(value: const AsyncLoading());
+        state = state.copyWith(
+            conversationsWithUsersObjects: event, value: AsyncData(event));
+      },
+      onError: (err, st) async {
+        print(err);
+        print(st);
+        print(
+            "error from listConversationController.getUserConversationsInformationsInRealtime");
+        // print(err);
+        // state = state.copyWith(value: AsyncError(err, st));
+      },
+    );
+
+    //* Test avec watch pour faire comme la seconde rép: Loading H24
+    // ref
+    //     .watch(
+    //         conversationWithMembersStreamProvider2(authRepository.currentUser))
+    //     .when(data: (data) {
+    //   print("Le stream dans le controller a recu une infos");
+    //   print(data);
+    //   state = state.copyWith(
+    //       conversationsWithUsersObjects: data, value: AsyncData(data));
+    // }, error: (err, st) {
+    //   print("error");
+    //   print(err);
+    //   state = state.copyWith(value: AsyncError(err, st));
+    // }, loading: () {
+    //   print("loading");
+    // });
 
 //! fonctionne car ont envoie l'id de l'user ce qui va reconstruire le stream
-    conversationStreamSubscription = ref.listen(
-        conversationWithMembersStreamProvider2(authRepository.currentUser),
-        (_, data) {
-      data.when(data: (data) {
-        print("Le stream dans le controller a recu une infos");
-        print(data);
-        state = state.copyWith(
-            conversationsWithUsersObjects: data, value: AsyncData(data));
-      }, error: (err, st) {
-        print("error");
-        print(err);
-        state = state.copyWith(value: AsyncError(err, st));
-      }, loading: () {
-        print("loading");
-      });
-    });
+    // ps2 = ref.listen(
+    //     conversationWithMembersStreamProvider2(authRepository.currentUser),
+    //     (_, data) {
+    //   data.when(data: (data) {
+    //     print("Le stream dans le controller a recu une infos");
+    //     print(data);
+    //     state = state.copyWith(
+    //         conversationsWithUsersObjects: data, value: AsyncData(data));
+    //   }, error: (err, st) {
+    //     print("error");
+    //     // print(err);
+    //     // state = state.copyWith(value: AsyncError(err, st));
+    //   }, loading: () {
+    //     print("loading");
+    //   });
+    // });
 
     //! Mettre une des 2 fonctions du haut pour que ca fonctionne.
 
-//!devrait fonctionner car ont va appeler autoDispose sur notre StreamProvider
-    // ref.listen(conversationWithMembersStreamProvider2, (_, data) {
+//!ne fonctionne pas car une fois construit, conversationWithMembersStreamProvider
+//!ne sera pas reconstruit après le changement d'utilisateur.
+//!Il n'est en faite pas lier à conversationRepositoryProvider. Si j'ai envie
+//!qu'il soit reconstruit, je dois utiliser autoDispose sauf que je ne peux exploiter
+//!listen d'un streamProvider.autoDispose que dans un Provider. Nous sommes actuellement
+//!dans un StateNotifier.
+    // ref.listen(conversationWithMembersStreamProvider, (_, data) {
     //   data.when(data: (data) {
     //     print("Le stream dans le controller a recu une infos");
     //     print(data);
@@ -110,10 +147,8 @@ final listConversationsControllerProvider = StateNotifierProvider.autoDispose<
       ref.watch(conversationsRepositoryProvider);
   // final convStreamProvider = ref.watch(conversationWithMembersStreamProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
-  ref.keepAlive();
+  // ref.keepAlive();
 
   return ListConversationsController(
-      authRepository: authRepo,
-      groupRepository: groupTchatRepo,
-      ref: ref);
+      authRepository: authRepo, groupRepository: groupTchatRepo, ref: ref);
 });

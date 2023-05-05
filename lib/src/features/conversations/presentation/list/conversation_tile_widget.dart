@@ -73,9 +73,10 @@ class _ConversationTileState extends State<ConversationTile> {
       lastMessage = 'Image'.hardcoded;
     }
     if (lastMessage != null && lastSender != null) {
-      return (_conversation.membersFilled.length == 2)
-          ? lastMessage
-          : "$lastSender: $lastMessage";
+      String senderName = _conversation.membersFilled
+          .firstWhere((user) => user.uid == lastSender)
+          .username;
+      return "$senderName: $lastMessage";
     }
     return 'Faites le premier pas ;)'.hardcoded;
   }
@@ -129,7 +130,8 @@ class _ConversationTileState extends State<ConversationTile> {
           style: const TextStyle(fontSize: 15),
         ),
       ),
-      leading: _getConversationPicture(),
+      leading:
+          SizedBox(height: 60, width: 60, child: _getConversationPicture()),
       trailing: Text(
         _getLastMessageDate(),
         style: const TextStyle(

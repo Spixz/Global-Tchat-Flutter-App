@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/enums/message_type.dart';
@@ -14,6 +16,8 @@ class DisplayConversationController
   final ConversationsRepository conversationsRepository;
   final AuthRepository authRepository;
 
+  late StreamSubscription<List<ConversationWithMembers>> _conversationsSubscription;
+
   DisplayConversationController(
       {required this.authRepository,
       required this.conversationsRepository,
@@ -26,10 +30,17 @@ class DisplayConversationController
     listenMessagesFromConversationStream();
   }
 
+  @override
+  void dispose() {
+    print("The DisplayConversationController was deleted");
+    _conversationsSubscription.cancel();
+    super.dispose();
+  }
+
 //Ecoute le stream des informations des conversations et modifie le state
 //quand une information sur la conversation ciblée est modifiée.
   void listenUserConversationInformationStream() {
-    conversationsRepository.getUserConversationsInformationsInRealtime().listen(
+    _conversationsSubscription = conversationsRepository.getUserConversationsInformationsInRealtime().listen(
       (event) {
         try {
           var conv =
@@ -150,7 +161,7 @@ class DisplayConversationController
   }
 }
 
-final displayConversationControllerProvider = StateNotifierProvider.family<
+final displayConversationControllerProvider = StateNotifierProvider.autoDispose.family<
     DisplayConversationController,
     DisplayConversationState,
     String>((ref, conversationId) {

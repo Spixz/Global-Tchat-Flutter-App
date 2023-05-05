@@ -253,9 +253,8 @@ final conversationsRepositoryProvider =
       storage: FirebaseStorage.instance);
 });
 
-
 final conversationWithMembersStreamProvider =
-    StreamProvider.autoDispose<List<ConversationWithMembers>>((
+    StreamProvider<List<ConversationWithMembers>>((
   ref,
 ) {
   final ConversationsRepository repository =
