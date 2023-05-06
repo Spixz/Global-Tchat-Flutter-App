@@ -22,8 +22,9 @@ class _SearchResultState extends ConsumerState<SelectedUsers> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return SizedBox(
-        height: size.height * 0.3,
+    return Container(
+        margin: const EdgeInsets.symmetric(vertical: 15.0),
+        // height: size.height * 0.3,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           // reverse: true,

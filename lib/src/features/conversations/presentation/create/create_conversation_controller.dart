@@ -37,9 +37,11 @@ class CreateConversationController
   void searchUser() {
     state = state.copyWith(value: const AsyncLoading());
     final query = state.searchQuery.toLowerCase();
-    final searchResult = state.allUsersList
-        .where((user) => user.username.toLowerCase().startsWith(query))
-        .toList();
+    final searchResult = (query.isNotEmpty)
+        ? state.allUsersList
+            .where((user) => user.username.toLowerCase().startsWith(query))
+            .toList()
+        : <AppUser>[];
     state = state.copyWith(
         searchResults: searchResult, value: const AsyncData(null));
   }
@@ -64,10 +66,15 @@ class CreateConversationController
         selectedUsers: updatedSelectedUsers, value: const AsyncData(null));
   }
 
+  void updateConversationName(String name) {
+    state = state.copyWith(value: const AsyncLoading());
+    state =
+        state.copyWith(conversationName: name, value: const AsyncData(null));
+  }
+
   Future<AsyncValue<String>> createGroupTchat() async {
     state = state.copyWith(value: const AsyncLoading());
     try {
-      ///En vrai inutile car le router check avant de load la page.
       if (authRepository.currentUser == null) {
         final errorMessage =
             "Vous devez être connecté pour éffectuer cette opération".hardcoded;
@@ -80,7 +87,7 @@ class CreateConversationController
         ...state.selectedUsers.map((member) => member.uid).toList(),
         ownerID!
       ];
-      final groupId = await groupRepository.createGroupTchat(ownerID, members);
+      final groupId = await groupRepository.createGroupTchat(state.conversationName, ownerID, members);
       state = state.copyWith(value: const AsyncData(null));
       return AsyncData(groupId);
     } catch (err, st) {
@@ -88,14 +95,10 @@ class CreateConversationController
       return AsyncError(err, st);
     }
   }
-
-  //si imageUrl == null alors afficher l'image de l'autre user
-  //sinon si c un grp, retourner null et afficher une image de groupe
 }
 
-final CreateConversationControllerProvider =
-    StateNotifierProvider.autoDispose<CreateConversationController, ListConversationsState>(
-        (ref) {
+final CreateConversationControllerProvider = StateNotifierProvider.autoDispose<
+    CreateConversationController, ListConversationsState>((ref) {
   final ConversationsRepository groupTchatRepo =
       ref.watch(conversationsRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);

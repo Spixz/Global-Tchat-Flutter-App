@@ -54,11 +54,13 @@ class ConversationsRepository {
   }
 
   ///Je ne passe pas de GroupTchat car le repository doit être agnostique
-  Future<String> createGroupTchat(String ownerID, List<String> members) async {
+  Future<String> createGroupTchat(
+      String? conversationName, String ownerID, List<String> members) async {
     final conversationCollection = firestore.collection('groups');
     final messageCollection = firestore.collection('messages');
     final newTchat = Conversation(
         id: '',
+        name: conversationName,
         ownerId: ownerID,
         members: members,
         admins: [ownerID],

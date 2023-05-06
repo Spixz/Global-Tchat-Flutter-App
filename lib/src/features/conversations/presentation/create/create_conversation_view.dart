@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_controller.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/search_bar_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/search_result_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/selected_users_widget.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/localization/string_hardcoded.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
 
 class CreateNewConversation extends ConsumerStatefulWidget {
@@ -34,6 +36,46 @@ class _CreateNewConversationState extends ConsumerState<CreateNewConversation> {
     });
   }
 
+  void showGroupNameDialog(BuildContext context) async {
+    TextEditingController controller = TextEditingController();
+
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Group Name'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: 'Optional'.hardcoded,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'.hardcoded),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Validate'.hardcoded),
+              onPressed: () {
+                if (controller.text.isNotEmpty) {
+                  ref
+                      .read(CreateConversationControllerProvider.notifier)
+                      .updateConversationName(controller.text);
+                }
+                controller.dispose();
+                Navigator.of(context).pop();
+                createGroupTchat();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen(CreateConversationControllerProvider, (previous, state) {
@@ -47,22 +89,14 @@ class _CreateNewConversationState extends ConsumerState<CreateNewConversation> {
     return Scaffold(
         appBar: AppBar(title: const Text('Create New Group')),
         body: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                icon: Icon(Icons.person),
-                hintText: 'Username',
-                labelText: 'Name',
-              ),
-              onChanged: (value) => updateQueryAndSearch(value),
-            ),
+            SearchBar(updateQueryAndSearch: updateQueryAndSearch),
             SelectedUsers(selectedUsers: selectedUsers),
             SearchResults(searchResult: searchResults)
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            onPressed: () => createGroupTchat(),
+            onPressed: () => showGroupNameDialog(context), //createGroupTchat(),
             backgroundColor: Colors.green,
             child: const Icon(Icons.arrow_forward)));
   }

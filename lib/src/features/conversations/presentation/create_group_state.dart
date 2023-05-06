@@ -8,12 +8,14 @@ import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/f
 class ListConversationsState {
   final AsyncValue value;
   final String searchQuery;
+  final String? conversationName;
   final List<AppUser> allUsersList;
   final List<AppUser> searchResults;
   final List<AppUser> selectedUsers;
 
   ListConversationsState({
     this.value = const AsyncData(null),
+    this.conversationName,
     this.searchQuery = "",
     this.allUsersList = const [],
     this.searchResults = const [],
@@ -23,12 +25,14 @@ class ListConversationsState {
   ListConversationsState copyWith({
     AsyncValue? value,
     String? searchQuery,
+  String? conversationName,
     List<AppUser>? allUsersList,
     List<AppUser>? searchResults,
     List<AppUser>? selectedUsers,
   }) {
     return ListConversationsState(
       value: value ?? this.value,
+      conversationName: conversationName ?? this.conversationName,
       searchQuery: searchQuery ?? this.searchQuery,
       allUsersList: allUsersList ?? this.allUsersList,
       searchResults: searchResults ?? this.searchResults,
@@ -38,7 +42,7 @@ class ListConversationsState {
 
   @override
   String toString() {
-    return 'CreateConversationState(value: $value, searchQuery: $searchQuery, allUsersList: $allUsersList, searchResults: $searchResults, selectedUsers: $selectedUsers)';
+    return 'CreateConversationState(value: $value, conversationName: $conversationName, searchQuery: $searchQuery, allUsersList: $allUsersList, searchResults: $searchResults, selectedUsers: $selectedUsers)';
   }
 
   @override
@@ -47,6 +51,7 @@ class ListConversationsState {
 
     return other.value == value &&
         other.searchQuery == searchQuery &&
+        other.conversationName == conversationName &&
         listEquals(other.allUsersList, allUsersList) &&
         listEquals(other.searchResults, searchResults) &&
         listEquals(other.selectedUsers, selectedUsers);
@@ -55,6 +60,7 @@ class ListConversationsState {
   @override
   int get hashCode {
     return value.hashCode ^
+        conversationName.hashCode ^
         searchQuery.hashCode ^
         allUsersList.hashCode ^
         searchResults.hashCode ^
