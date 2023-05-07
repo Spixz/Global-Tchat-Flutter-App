@@ -1,16 +1,28 @@
-# riverpod_architecture_template_trom_andrea_bizzotto_course
+<h1 align="center">
+    GlobalTchat
+</h1>
 
-A new Flutter project.
+<p align="center">
+    <b>
+        <a href="https://global-tchat-flutter-app.web.app">Web demo</a><br>
+    </b>
+</p>
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43412722/236698740-1ac462e9-2ae2-4766-9d7d-2eac0fa5e0a2.png" alt="second screen group"/>
+  <img src="https://user-images.githubusercontent.com/43412722/236699189-a59d4bb9-a52a-4b33-839b-d66de73c4e2a.png" alt="first screen group"/>
+</p>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Messaging app (web/android) based on Whatsapp style using firebase and based on the **[Riverpod Architecture](https://codewithandrea.com/articles/flutter-app-architecture-riverpod-introduction/)** from **[Andrea Bizzotto](https://github.com/bizz84/)**.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+
+- [x]  Realtime Messaging
+- [x]  Group conversations
+- [x]  Send pictures
+- [x]  “Was read” indicator
+
+## Architecture
+
