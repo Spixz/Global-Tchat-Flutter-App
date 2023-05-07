@@ -61,6 +61,8 @@ class ListConversationsController
         groupRepository.getUserConversationsInformationsInRealtime().listen(
       (event) {
         state = state.copyWith(value: const AsyncLoading());
+        print("Conversations");
+        print(event);
         state = state.copyWith(
             conversationsWithUsersObjects: event, value: AsyncData(event));
       },

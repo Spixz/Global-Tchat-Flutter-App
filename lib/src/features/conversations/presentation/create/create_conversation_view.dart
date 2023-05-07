@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/app_bar_menu.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/create_conversation_controller.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/search_bar_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/conversations/presentation/create/search_result_widget.dart';
@@ -87,7 +88,8 @@ class _CreateNewConversationState extends ConsumerState<CreateNewConversation> {
     final selectedUsers = state.selectedUsers;
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Create New Group')),
+        appBar:
+            AppBarMenu(title: 'Create New Group'.hardcoded, menuEnabled: false),
         body: Column(
           children: [
             SearchBar(updateQueryAndSearch: updateQueryAndSearch),

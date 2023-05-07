@@ -26,6 +26,7 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
 
   void selectAndSendFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
+      withData: true,
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png', 'gif', 'svg', 'bmp'],
     );
@@ -67,8 +68,6 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
     _emailController.text = state.user?.email ?? '';
     _usernameController.text = state.user?.username ?? '';
 
-    print(state.user?.profilePic);
-
     return Scaffold(
         appBar: const AccountAppBar(),
         body: Center(
@@ -101,7 +100,6 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
                         );
                       },
                       errorWidget: (context, url, error) {
-                        print(error);
                         return Stack(
                           children: [
                             const CircleAvatar(

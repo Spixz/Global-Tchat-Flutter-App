@@ -15,7 +15,8 @@ void main() async {
     if (stack is stack_trace.Chain) return stack.toTrace().vmTrace;
     return stack;
   };
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
+
   WidgetsFlutterBinding.ensureInitialized();
   // turn off the # in the URLs on the web
   usePathUrlStrategy();

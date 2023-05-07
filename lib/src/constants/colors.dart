@@ -9,9 +9,9 @@ const myMessageColor = Color.fromRGBO(224, 254, 199, 1);
 const othersMessageColor = Colors.white;
 
 const senderMessageColor = Color.fromRGBO(37, 45, 49, 1);
-const tabColor = Color.fromRGBO(0, 167, 131, 1);
+const loginPageColor = Color.fromRGBO(0, 167, 131, 1);
+const loginPrimaryColor = Color.fromRGBO(0, 140, 109, 1);
 const buttonColor = Color.fromRGBO(0, 114, 89, 1);
-const loginButtonColor = Color.fromRGBO(0, 140, 109, 1);
 
 const searchBarColor = Color.fromRGBO(50, 55, 57, 1);
 const dividerColor = Color.fromRGBO(37, 45, 50, 1);

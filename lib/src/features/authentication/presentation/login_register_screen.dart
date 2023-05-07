@@ -53,8 +53,8 @@ class _LoginRegisterScreenState extends ConsumerState<LoginRegisterScreen> {
       onSubmitAnimationCompleted: () {},
       onRecoverPassword: _recoverPassword,
       theme: LoginTheme(
-        pageColorLight: tabColor,
-        primaryColor: loginButtonColor,
+        pageColorLight: loginPageColor,
+        primaryColor: loginPrimaryColor,
       ),
       // loginProviders: <LoginProvider>[
       //   LoginProvider(

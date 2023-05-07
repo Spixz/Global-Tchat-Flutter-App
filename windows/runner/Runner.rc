@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "riverpod_architecture_template_trom_andrea_bizzotto_course" "\0"
+            VALUE "FileDescription", "Global Tchat" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "riverpod_architecture_template_trom_andrea_bizzotto_course" "\0"
+            VALUE "InternalName", "Global Tchat" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "riverpod_architecture_template_trom_andrea_bizzotto_course.exe" "\0"
-            VALUE "ProductName", "riverpod_architecture_template_trom_andrea_bizzotto_course" "\0"
+            VALUE "ProductName", "Global Tchat" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

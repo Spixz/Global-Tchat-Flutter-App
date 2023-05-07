@@ -56,6 +56,8 @@ dependencies:
   cached_network_image: ^3.2.3
   easy_image_viewer: ^1.2.0
   visibility_detector: ^0.4.0+2
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.2.19
 
 dev_dependencies:
   flutter_test:
@@ -110,3 +112,19 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+
+flutter_native_splash:
+  # color: "#42a5f5"
+  color: "#00A783"
+  image: "assets/icons/app_icon.png"
+  color_dark: "#000000"

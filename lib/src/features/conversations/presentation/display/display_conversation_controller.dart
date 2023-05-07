@@ -16,7 +16,8 @@ class DisplayConversationController
   final ConversationsRepository conversationsRepository;
   final AuthRepository authRepository;
 
-  late StreamSubscription<List<ConversationWithMembers>> _conversationsSubscription;
+  late StreamSubscription<List<ConversationWithMembers>>
+      _conversationsSubscription;
 
   DisplayConversationController(
       {required this.authRepository,
@@ -40,7 +41,9 @@ class DisplayConversationController
 //Ecoute le stream des informations des conversations et modifie le state
 //quand une information sur la conversation ciblée est modifiée.
   void listenUserConversationInformationStream() {
-    _conversationsSubscription = conversationsRepository.getUserConversationsInformationsInRealtime().listen(
+    _conversationsSubscription = conversationsRepository
+        .getUserConversationsInformationsInRealtime()
+        .listen(
       (event) {
         try {
           var conv =
@@ -161,10 +164,9 @@ class DisplayConversationController
   }
 }
 
-final displayConversationControllerProvider = StateNotifierProvider.autoDispose.family<
-    DisplayConversationController,
-    DisplayConversationState,
-    String>((ref, conversationId) {
+final displayConversationControllerProvider = StateNotifierProvider.autoDispose
+    .family<DisplayConversationController, DisplayConversationState, String>(
+        (ref, conversationId) {
   final ConversationsRepository conversationsRepo =
       ref.watch(conversationsRepositoryProvider);
   final AuthRepository authRepo = ref.watch(authRepositoryProvider);
