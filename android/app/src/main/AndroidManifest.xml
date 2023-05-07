@@ -3,6 +3,7 @@
    <application
         android:label="riverpod_architecture_template_trom_andrea_bizzotto_course"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

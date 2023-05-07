@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/configs/firebase_options.dart';
 
@@ -16,9 +13,11 @@ class FirebaseManager {
         options: DefaultFirebaseOptions.currentPlatform,
       );
       if (STATE == 'debug') {
-        await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-        FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-        await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+        const host = kIsWeb ? "localhost" : "192.168.1.42"; //"10.0.2.2";
+
+        // await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+        // FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+        // await FirebaseStorage.instance.useStorageEmulator(host, 9199);
       }
       debugPrint("Fin init firebase");
     } catch (e) {

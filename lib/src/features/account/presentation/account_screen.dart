@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/common_widgets/primary_button.dart';
-import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_app_bar/account_app_bar.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/account_controller.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/features/account/presentation/change_profile_pic_widget.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/utils/async_value_ui.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
@@ -67,6 +67,8 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
     _emailController.text = state.user?.email ?? '';
     _usernameController.text = state.user?.username ?? '';
 
+    print(state.user?.profilePic);
+
     return Scaffold(
         appBar: const AccountAppBar(),
         body: Center(
@@ -94,32 +96,26 @@ class _HomeTestState extends ConsumerState<AccountScreen> {
                               radius: 100,
                               // fit: BoxFit.cover,
                             ),
-                            Positioned(
-                                bottom: 6,
-                                right: 6,
-                                child: CircleAvatar(
-                                  backgroundColor: buttonColor,
-                                  radius: 25,
-                                  child: IconButton(
-                                    color: Colors.white,
-                                    splashRadius: 20,
-                                    icon: const Icon(Icons.camera_alt),
-                                    onPressed: () {
-                                      selectAndSendFile();
-                                    },
-                                  ),
-                                )),
+                            ChangeProfilPic(onTap: selectAndSendFile),
                           ]),
                         );
                       },
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                            radius: 100,
-                            child: Icon(
-                              Icons.person,
-                              size: 100.0,
-                              color: Colors.grey,
+                      errorWidget: (context, url, error) {
+                        print(error);
+                        return Stack(
+                          children: [
+                            const CircleAvatar(
+                              radius: 100,
+                              child: Icon(
+                                Icons.person,
+                                size: 100.0,
+                                color: Colors.grey,
+                              ),
                             ),
-                          )),
+                            ChangeProfilPic(onTap: selectAndSendFile),
+                          ],
+                        );
+                      }),
                 ),
                 TextFormField(
                   controller: _usernameController,
