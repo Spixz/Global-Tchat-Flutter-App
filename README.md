@@ -34,7 +34,7 @@ It contain at least a view, a state and a controller.
 
 The view represents the page itself. The logic of this view is managed by a Controller. This controller contains an immutable state (a class that contains variables). The view can read the state but can only modify it via the controller. Each time the state is modified, the widget is rebuilt.
 
-Put the links of create_conversation (view, controller, state).
+Example with create conversation : [view](https://github.com/Spixz/Global-Tchat-Flutter-App/blob/main/lib/src/features/conversations/presentation/create/create_conversation_view.dart), [controller](https://github.com/Spixz/Global-Tchat-Flutter-App/blob/main/lib/src/features/conversations/presentation/create/create_conversation_controller.dart), [state](https://github.com/Spixz/Global-Tchat-Flutter-App/blob/main/lib/src/features/conversations/presentation/create/create_conversation_state.dart)
 
 ## Domain Layer
 
