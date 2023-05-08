@@ -11,9 +11,9 @@
 
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/43412722/236698740-1ac462e9-2ae2-4766-9d7d-2eac0fa5e0a2.png" alt="second screen group"/>
-  <img src="https://user-images.githubusercontent.com/43412722/236699189-a59d4bb9-a52a-4b33-839b-d66de73c4e2a.png" alt="first screen group"/>
+  <img src="https://user-images.githubusercontent.com/43412722/236908390-2679f71b-836e-4c86-ac48-01277d9b4cdb.png" alt="second screen group"/>
 </p>
+
 
 Messaging app (web/android) based on Whatsapp style using firebase and based on an implementation of the **[Riverpod Architecture](https://codewithandrea.com/articles/flutter-app-architecture-riverpod-introduction/)** from **[Andrea Bizzotto](https://github.com/bizz84/)**.
 
