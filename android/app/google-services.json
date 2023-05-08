@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1043381828948",
+    "project_id": "global-tchat-flutter-app",
+    "storage_bucket": "global-tchat-flutter-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043381828948:android:9df770a8e70d7e93b89cc1",
+        "android_client_info": {
+          "package_name": "com.spixz.globaltchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043381828948-prki0b50d6uudnk20skdph0jgskq95q8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7XEismoH_zisO9S6PqHQ4b35qb3a490"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043381828948-prki0b50d6uudnk20skdph0jgskq95q8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

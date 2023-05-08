@@ -4,10 +4,10 @@ project(runner LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "riverpod_architecture_template_trom_andrea_bizzotto_course")
+set(BINARY_NAME "Global Tchat")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
-set(APPLICATION_ID "com.example.riverpod_architecture_template_trom_andrea_bizzotto_course")
+set(APPLICATION_ID "com.spixz.globaltchat")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

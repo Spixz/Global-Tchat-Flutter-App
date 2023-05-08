@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/app_sizes.dart';
+import 'package:riverpod_architecture_template_trom_andrea_bizzotto_course/src/constants/colors.dart';
 
 /// Primary button based on [ElevatedButton].
 /// Useful for CTAs in the app.
@@ -15,9 +16,14 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return SizedBox(
       height: Sizes.p48,
+      width: size.width * 0.2,
       child: ElevatedButton(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll<Color>(buttonColor),
+        ),
         onPressed: onPressed,
         child: isLoading
             ? const CircularProgressIndicator()
@@ -26,7 +32,7 @@ class PrimaryButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
+                    .titleLarge!
                     .copyWith(color: Colors.white),
               ),
       ),
